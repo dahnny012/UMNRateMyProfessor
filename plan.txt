@@ -1,0 +1,16 @@
+Game plan:
+
+
+
+-- Extend onto proj-cc scraper
+make a scraper to get all the data from rate my professor using python
+multi thread parser
+
+
+-- Create a text file, load to node js
+
+-- Have node js load it in to memory for rating + professor
+
+-- Extension will scrape all names put into json , make a ajax request to my server
+
+-- Server returns a JSON where manipulate the data from there
