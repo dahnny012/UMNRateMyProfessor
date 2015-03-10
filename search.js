@@ -58,7 +58,7 @@ function getPage(fn,offset){
 function demo2(){
     var http = require('http');
     http.globalAgent.maxSockets = 1000;
-
+    var table = {}
 
 
     function getPage(fn,options){
@@ -82,10 +82,10 @@ function demo2(){
          http.request(options, callback).end();
     }
     
-   function search(){
-      var max = 250;
+   function search(fn){
+      var max = 20;
       var offset = 0;
-      var table = {}
+      var finished = 0;
       while(offset <= max){
           var options = {
           host: 'www.ratemyprofessors.com',
@@ -103,13 +103,14 @@ function demo2(){
                 
                 getPage(function(body){
                     $ = cheerio.load(body);
-                    console.log(profName);
                     var grade = getGrade($)
                     var classes = getClasses($);
                     var prof = createProf(profName,grade,classes);
+                    var review = getScores($);
                     addProf(prof,table)
                 },profOptions);
-             })},
+             })
+        },
         options)
       }
    }
@@ -118,7 +119,7 @@ function demo2(){
        var classes = {};
        
        $(".tftable").find(".name").each(function(i,elem){
-           var _class = $(this).text().toUpperCase().replace(' ','');
+           var _class = $(this).find(".response").text().toUpperCase().replace(/ /,'','g');
            classes[_class] = _class;
        });
        return classes;
@@ -126,8 +127,45 @@ function demo2(){
    
    function getGrade($){
        var grade = $(".grade").first().text();
-       console.log(grade);
        return grade;
+   }
+   
+   function getScores($){
+       var sliders = $(".faux-slides").find(".rating-slider");
+       var scores = [];
+       sliders.each(function(i,ele){
+           var label = $(this).find(".label").text();
+           var score = $(this).find(".rating").text();
+           scores.push(label + " " + score);
+           console.log(label + " " + score);
+       });
+   }
+   
+    function getReviews(){
+        var reviews = $(".tftable").find("tr").slice(1);
+        if(reviews.length == 0)
+            return;
+        var counter = 3;
+        var i = 0;
+        var size=  reviews.length;
+        
+        var reviewsTable = {}
+        while(counter && reviews == i){
+            var query = $(reviews[i])
+            var _class = query.find(".name").find(".response").text().toUpperCase().replace(/ /,'','g');
+            // Check if already been reviewed
+            if(reviewsTable[_class] == undefined){
+                counter--;
+                var textbook = query.find(".textbook-use").text();
+                var avg;
+                query.find(".score").each(function(i,ele){
+                    avg += parseInt($(this).text());
+                    count++;
+                })
+                avg = avg/3;
+                var review = query.find(".comments").find("p").text()
+            }
+        }
    }
    
    
@@ -147,7 +185,7 @@ function demo2(){
            table[prof.name].push(prof)
        }
    }
-   search()
+   search();
 }
 
 demo2()
