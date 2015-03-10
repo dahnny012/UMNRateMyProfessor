@@ -85,6 +85,7 @@ function demo2(){
    function search(){
       var max = 250;
       var offset = 0;
+      var table = {}
       while(offset <= max){
           var options = {
           host: 'www.ratemyprofessors.com',
@@ -99,13 +100,52 @@ function demo2(){
                   host: 'www.ratemyprofessors.com',
                   path: profPage
                 };
+                
                 getPage(function(body){
                     $ = cheerio.load(body);
-                    console.log($(".grade").first().text())
+                    console.log(profName);
+                    var grade = getGrade($)
+                    var classes = getClasses($);
+                    var prof = createProf(profName,grade,classes);
+                    addProf(prof,table)
                 },profOptions);
              })},
         options)
       }
+   }
+   
+   function getClasses($){
+       var classes = {};
+       
+       $(".tftable").find(".name").each(function(i,elem){
+           var _class = $(this).text().toUpperCase().replace(' ','');
+           classes[_class] = _class;
+       });
+       return classes;
+   }
+   
+   function getGrade($){
+       var grade = $(".grade").first().text();
+       console.log(grade);
+       return grade;
+   }
+   
+   
+  
+   function createProf(name,grade,classes){
+       return {
+           "name":name,
+           "grade":grade,
+           "classes":classes
+       }
+   }
+   
+   function addProf(prof,table){
+       if(table[prof.name] === undefined){
+           table[prof.name] = [prof]
+       }else{
+           table[prof.name].push(prof)
+       }
    }
    search()
 }
