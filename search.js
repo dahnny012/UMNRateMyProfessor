@@ -31,7 +31,7 @@ function demo2(){
     }
     
    function search(fn){
-      var max = 0;
+      var max = 100;
       var offset = 0;
       var finished = 0;
       while(offset <= max){
@@ -51,7 +51,7 @@ function demo2(){
                 
                 getPage(function(body){
                     $ = cheerio.load(body);
-                    console.log(profName);
+                    //console.log(profName);
                     var avgGrade = getGrade($);
                     var rating = getRating($);
                     var classes = getClasses($);
@@ -79,8 +79,8 @@ function demo2(){
    }
    
    function getGrade($){
-       //var grade = $(".grade").slice(1).text();
-       //return grade;
+       var grade = $(".grade").slice(1).first().text();
+       return grade;
    }
    function getRating($){
        var grade = $(".grade").first().text();
@@ -94,7 +94,7 @@ function demo2(){
            var label = $(this).find(".label").text();
            var score = $(this).find(".rating").text();
            scores.push(label + " " + score);
-           console.log(label + " " + score);
+           //console.log(label + " " + score);
        });
        
        return scores
@@ -134,7 +134,7 @@ function demo2(){
                 review["review"] = reviewText;
                 reviewsTable[_class] = review;
             }else{
-                console.log("reject");
+                //console.log("reject");
             }
             i++;
         }
@@ -178,8 +178,8 @@ function demo2(){
             console.log(prof);
         },options);
    }
-   //search();
-   searchProfessor();
+   search();
+   //searchProfessor();
 }
 
 demo2()
