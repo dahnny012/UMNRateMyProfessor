@@ -1,6 +1,6 @@
 var needle = require('needle');
 var cheerio = require('cheerio');
-
+var finished = 0;
 
 
 function demo2(){
@@ -9,7 +9,7 @@ function demo2(){
     var table = {}
 
 
-    function getPage(fn,options){
+    function getPage(fn,options,args){
         
         var callback = function(response) {
           var body = '';
@@ -19,7 +19,7 @@ function demo2(){
         
           //the whole response has been recieved, so we just print it out here
           response.on('end', function () {
-             fn(body);
+             fn(body,args);
           });
           
           response.on('error',function(){
@@ -31,7 +31,7 @@ function demo2(){
     }
     
    function search(fn){
-      var max = 3900;
+      var max = 20;
       var offset = 0;
       var finished = 0;
       while(offset <= max){
@@ -45,15 +45,13 @@ function demo2(){
              $("li[class='listing PROFESSOR']").each(function(i, elem) {
                  var profPage = $(this).children("a").attr('href')
                  var profName = $(this).find('.main').text();
-                 console.log(profName);
+                 //console.log(profName);
                  var profOptions = {
                   host: 'www.ratemyprofessors.com',
                   path: profPage,
                   keepAlive: true
                 };
-                
-                /*
-                getPage(function(body){
+                getPage(function(body,offset){
                     $ = cheerio.load(body);
                     //console.log(profName);
                     var avgGrade = getGrade($);
@@ -64,9 +62,14 @@ function demo2(){
                     var metrics = {"rating":rating,"avgGrade":avgGrade,"scores":scores};
                     var prof = createProf(profName,classes,metrics,reviews);
                     addProf(prof,table)
-                    //console.log(prof);
-                    console.log(profName);
-                },profOptions);*/
+                    finished++;
+                    if(finished >= (max + 19)){
+                        var json = JSON.stringify(table);
+                        var parse = JSON.parse(json);
+                        console.log(parse);
+                        console.log(parse["Driessen, Michelle"]);
+                    }
+                },profOptions,offset);
              })
         },
         options)
@@ -162,6 +165,11 @@ function demo2(){
        }else{
            table[prof.name].push(prof)
        }
+   }
+   
+   function formatName(name){
+       //Server //replace(/, /,",");
+       //Client //return name.replace(/PHD\./,"").replace(/, /,",");
    }
    
    function searchProfessor(){
