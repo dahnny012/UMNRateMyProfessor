@@ -110,14 +110,13 @@ function demo2(){
         var i = 0;
         var size=  reviews.length;
         
-        var reviewsTable = {}
-        console.log(count);
-        console.log(reviews.length);
+        var reviewsTable = {};
         while(count > 0 && reviews.length != i){
             var query = $(reviews[i])
-            var _class = query.find(".name").find(".response").text().toUpperCase().replace(/ /,'','g');
+            var _class = query.find(".name").find(".response").text().toUpperCase()
+            //console.log("class: " + _class);
             // Check if already been reviewed
-            if(reviewsTable[_class] == undefined){
+            if(reviewsTable[_class] == undefined && _class != ''){
                 var review = {};
                 var date = query.find(".date").text();
                 count--;
