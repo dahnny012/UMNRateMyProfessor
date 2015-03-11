@@ -31,24 +31,28 @@ function demo2(){
     }
     
    function search(fn){
-      var max = 100;
+      var max = 3900;
       var offset = 0;
       var finished = 0;
       while(offset <= max){
           var options = {
           host: 'www.ratemyprofessors.com',
-          path: '/search.jsp?query=university+of+minnesota+twin+cities&queryoption=HEADER&stateselect=&country=&dept=&queryBy=&facetSearch=&schoolName=&offset='+offset+'&max=20'
+          path: '/search.jsp?query=university+of+minnesota+twin+cities&queryoption=HEADER&stateselect=&country=&dept=&queryBy=&facetSearch=&schoolName=&offset='+offset+'&max=20',
+          keepAlive: true
         };
         offset += 20;
         getPage(function(body){$ = cheerio.load(body);
              $("li[class='listing PROFESSOR']").each(function(i, elem) {
                  var profPage = $(this).children("a").attr('href')
                  var profName = $(this).find('.main').text();
+                 console.log(profName);
                  var profOptions = {
                   host: 'www.ratemyprofessors.com',
-                  path: profPage
+                  path: profPage,
+                  keepAlive: true
                 };
                 
+                /*
                 getPage(function(body){
                     $ = cheerio.load(body);
                     //console.log(profName);
@@ -60,8 +64,9 @@ function demo2(){
                     var metrics = {"rating":rating,"avgGrade":avgGrade,"scores":scores};
                     var prof = createProf(profName,classes,metrics,reviews);
                     addProf(prof,table)
-                    console.log(prof);
-                },profOptions);
+                    //console.log(prof);
+                    console.log(profName);
+                },profOptions);*/
              })
         },
         options)
