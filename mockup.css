@@ -1,0 +1,16 @@
+a{
+}
+
+.prof{
+    background:black;
+    width:10px;
+    height:10px;
+    display:inline-block;
+}
+
+.profBox{
+    background:blue;
+    width:100px;
+    height:100px;
+    position:absolute;
+}
