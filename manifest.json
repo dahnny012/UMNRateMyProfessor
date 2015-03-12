@@ -14,7 +14,7 @@
     "persistent": true
   },
   "content_scripts":[{
-	"js":["test.js"],
+	"js":["content.js"],
 	"matches": ["*://onestop2.umn.edu/*"],
 	"run_at": "document_end"
   }]
