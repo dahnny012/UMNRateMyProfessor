@@ -16,11 +16,11 @@ function createNode(){
 	var node = document.createElement("img");
 	wrapper.appendChild(node);
 	wrapper.style.display = "inline";
-	wrapper.className = "profWrapper"
+	wrapper.className = "profWrapper";
 	node.className = "prof";
 	node.setAttribute("width","20px");
 	node.setAttribute("height","20px");
-	node.src ="http://icons.iconarchive.com/icons/wineass/ios7-redesign/512/Sample-icon.png"
+	node.src ="http://icons.iconarchive.com/icons/wineass/ios7-redesign/512/Sample-icon.png";
 
 	wrapper.addEventListener("click",function(e){
 		console.log(e.target.clicked);
@@ -49,6 +49,34 @@ function removeNode(e){
 }
 
 
-function createInfoNode(){
+function createInfoNode(response){
+	var prof = response.prof;
+	var profBox = document.createElement("div");
+	profBox.className = "profBox";
+	var profName = document.createElement("div");
+	profName.className = "profName";
+
 	
+	profBox.appendChild(profName);
+	var metricsWrapper = document.createElement("div");
+	var metricsHeader = document.createElement("div");
+	var profScore = document.createElement("div");
+	var profAvgGrade = document.createElement("div");
+	var profMetric = document.createElement("div");
+	var metricScore= document.createElement("div");
+	var metricGrade = document.createElement("div");
+	var reviewsWrapper = document.createElement("section");
+	var reviews = [];
+	// For each review
+		var review = document.createElement("div");
+	 	var reviewHeaderInfo = document.createElement("div");
+	 	var reviewHeaderScore = document.createElement("div");
+	 	
+	return profBox;
+}
+
+
+function sendMsg(name,_class){
+	chrome.runtime.sendMessage({greeting: "hello",profName:name,profClass: _class}, 
+	createInfoNode);
 }

@@ -26,3 +26,4 @@ function getProfessor(request){
   }
   return prof[0];
 }
+
