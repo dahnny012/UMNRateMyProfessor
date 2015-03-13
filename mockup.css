@@ -1,3 +1,7 @@
+div{
+    font-family: 'Open Sans', sans-serif;
+}
+
 .prof{
     background:black;
     width:10px;
@@ -8,10 +12,10 @@
 .profBox{
     background:white;
     width:300px;
-    height:200px;
+    height:105px;
     position:absolute;
-    overflow: auto;
-    border:2px solid black;
+    overflow: hidden;
+    border:1px solid black;
 }
 
 .profName{
@@ -19,13 +23,15 @@
     background:green;
     height:20px;
     text-align:center;
+    padding-top:5px;
 }
 
 
 .profMetricsWrapper{
     clear:left;
     background:green;
-    height:60px;
+    height:75px;
+    padding-top:5px;
 }
 
 .profMetricsHeader{
@@ -35,6 +41,7 @@
 .profScore,.profAvgGrade{
     text-align:center;
     width:50%;
+    margin:0 auto;
     float:left;
 }
 
@@ -50,9 +57,37 @@
     clear:left;
 }
 
+.showReviews{
+    width:25%;
+    margin-left:auto;
+    margin-right:auto;
+    font-size:15px;
+}
+
 .reviewHeader{
+    padding-right:10px;
     background:grey;
 }
+
+.reviewHeaderClass{
+    padding-top:5px;
+    float:right;
+    text-align:right;
+
+    height:40px;
+}
+
+.reviewScore{
+    height:40px;
+    font-size:20px;
+    padding-left:30px;
+    padding-top:10px;
+}
+
+.reviewText{
+    
+}
+
 .review{
     border:1px solid black;
 }

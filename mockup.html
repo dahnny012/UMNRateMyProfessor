@@ -1,4 +1,6 @@
 <link rel="stylesheet"type="text/css" href="mockup.css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:300' rel='stylesheet' type='text/css'>
+
 
 <div class="profBox">
     <div class="profName">
@@ -6,23 +8,34 @@
     </div>
     <div class="profMetricsWrapper">
         <div class="profMetricsHeader">
-            <div class="profScore">Score</div>
+            <div class="profScore">Avg. Score</div>
             <div class="profAvgGrade">Avg. Grade</div>
         </div>
         <div class="profMetric">
             <div class="profScore metricScore">4.5</div>
             <div class="profAvgGrade metricGrade">A-</div>
         </div>
+        <div class="showReviews">
+            Reviews
+        </div>
     </div>
     
     <section class="reviewsWrapepr">
         <div class="review">
-            <div class="reviewHeader">Class: 12344 Date: 12345 TextBook: ???</div>
-            <div class="reviewHeader">Review Score....</div>
+        <div class="reviewHeader">
+            <div class="reviewHeaderClass">CSCI 6969 
+                <div class="reviewDate">1/20/2000</div>
+            </div>
+            <div class="reviewScore">Score: 6.9</div>
+        </div>
+        <div class="reviewText">
         He is the best instructor in the department. 
         The lectures are well organized, clearly delivered. Cute British accent. 
         Caring for student's need and feedback. The materials are a little bit 
-        hard but I guess there's no one can make it more approachable than Carl!</div>
+        hard but I guess there's no one can make it more approachable than Carl!
+        </div>
+        <div class="reviewTextBook">TextBook: Barely cracked it open</div>
+        </div>
       <div class="review">
         <div class="reviewHeader">Class: 12344 Date: 12345 TextBook: ???</div>
             <div class="reviewHeader">Review Score....</div>  
@@ -41,3 +54,17 @@
     
     
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script>
+    $(".showReviews").on("click",function(e){
+        var parent = e.target.parentElement.parentElement;
+        if(e.target.clicked == undefined){
+            e.target.clicked = true;
+            parent.setAttribute("style","height:auto"); 
+        }else{
+            e.target.clicked = undefined;
+            parent.setAttribute("style","height:105px"); 
+        }
+    })
+</script>
