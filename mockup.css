@@ -1,5 +1,6 @@
 div{
-    font-family: 'Open Sans', sans-serif;
+    /*font-family: 'Open Sans', sans-serif;*/
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 .prof{
@@ -15,22 +16,27 @@ div{
     height:105px;
     position:absolute;
     overflow: hidden;
-    border:1px solid black;
+	background:white;
+	box-shadow: 2px 7px 7px .5px #D4D4D4;
+	padding-bottom:10px;
+
 }
 
 .profName{
     font-size:20px;
-    background:green;
     height:20px;
     text-align:center;
     padding-top:5px;
+    background:#EAEAEA;
+    width:90%;
+    padding-bottom:5px;
+    margin:0 auto;
 }
 
 
 .profMetricsWrapper{
     clear:left;
-    background:green;
-    height:75px;
+    height:85px;
     padding-top:5px;
 }
 
@@ -47,6 +53,8 @@ div{
 
 .metricGrade,.metricScore{
     font-size:30px;
+        background:#0C72AD;
+    color:white;
 }
 
 .profScores{
