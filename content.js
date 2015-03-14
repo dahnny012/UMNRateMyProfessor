@@ -51,28 +51,57 @@ function removeNode(e){
 
 function createInfoNode(response){
 	var prof = response.prof;
-	var profBox = document.createElement("div");
-	profBox.className = "profBox";
-	var profName = document.createElement("div");
-	profName.className = "profName";
-
+	var profBox = createDiv("profBox");
+	var profName = createDiv("profName");
+	var profMetricsWrapper = createDiv("profMetricsWrapper");
+	var profMetricsHeader = createDiv("profMetricsHeader");
+	var profScore = createDiv("profScore");
+	var profAvgGrade = createDiv("profAvgGrade");
+	var profMetric = createDiv("profMetric");
+	var metricScore= createDiv("profScore metricScore");
+	var metricGrade = createDiv("profAvgGrade metricGrade");
+	var showReviews = createDiv("showReviews");
 	
 	profBox.appendChild(profName);
-	var metricsWrapper = document.createElement("div");
-	var metricsHeader = document.createElement("div");
-	var profScore = document.createElement("div");
-	var profAvgGrade = document.createElement("div");
-	var profMetric = document.createElement("div");
-	var metricScore= document.createElement("div");
-	var metricGrade = document.createElement("div");
-	var reviewsWrapper = document.createElement("section");
-	var reviews = [];
-	// For each review
-		var review = document.createElement("div");
-	 	var reviewHeaderInfo = document.createElement("div");
-	 	var reviewHeaderScore = document.createElement("div");
-	 	
+	profBox.appendChild(profMetricsWrapper);
+	profBox.appendChild(profMetric);
+	profMetricsWrapper.appendChild(profMetricsHeader);
+	profMetricsWrapper.appendChild(profMetric);
+	profMetricsWrapper.appendChild(showReviews);
+	profMetricsHeader.appendChild(profScore);
+	profMetricsHeader.appendChild(profAvgGrade);
+	profMetric.appendChild(metricScore);
+	profMetric.appendChild(metricGrade);
+	
+	var reviews = prof.reviews;
+	var reviewsWrapper = createDiv("reviews","section")
+
+	for(var review in reviews){
+		var reviewNode = createDiv("review");
+	 	var reviewHeader = createDiv("reviewHeader");
+	 	var reviewHeaderClass = createDiv("reviewHeaderClass");
+	 	var reviewDate = createDiv("reviewDate");
+	 	var reviewScore = createDiv("reviewScore");
+	 	var reviewText = createDiv("reviewText");
+	 	var reviewTextBook = createDiv("reviewTextBook");
+	 	reviewsWrapper.appendChild(reviewNode);
+	 	reviewNode.appendChild(reviewHeader);
+	 	reviewNode.appendChild(reviewText);
+	 	reviewNode.appendChild(reviewTextBook);
+	 	reviewHeader.appendChild(reviewHeaderClass);
+	 	reviewHeaderClass.appendChild(reviewDate);
+	 	reviewHeader.appendChild(reviewScore);
+	
+	}
 	return profBox;
+}
+
+function createDiv(_class,tag){
+	if(tag === undefined)
+		tag = "div";
+	var node = document.createElement(tag);
+	node.className = _class;
+	return node;
 }
 
 
