@@ -1,5 +1,6 @@
 var needle = require('needle');
 var cheerio = require('cheerio');
+var fs = require("fs");
 var finished = 0;
 
 
@@ -66,8 +67,8 @@ function demo2(){
                     if(finished >= (max + 19)){
                         var json = JSON.stringify(table);
                         var parse = JSON.parse(json);
-                        console.log(parse);
-                        console.log(parse["Driessen, Michelle"]);
+                        fs.writeFileSync("data.js", "var testProfs = ");
+                        fs.writeFileSync("data,js",JSON.stringify(parse));
                     }
                 },profOptions,offset);
              })
@@ -136,6 +137,7 @@ function demo2(){
                 });
                 avg = (avg/3).toFixed(2);
                 var reviewText = query.find(".comments").find("p").text()
+                review["class"] = _class;
                 review["date"] =  date;
                 review["textbook"] = textbook;
                 review["score"] = avg;

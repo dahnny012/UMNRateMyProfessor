@@ -1,7 +1,41 @@
 <link rel="stylesheet"type="text/css" href="mockup.css">
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300' rel='stylesheet' type='text/css'>
 
-<div class="profBox">
+<div class="profBox" id="emptyBox">
+    <div class="profName">
+    </div>
+    <div class="profMetricsWrapper">
+        <div class="profMetricsHeader">
+            <div class="profScore"></div>
+            <div class="profAvgGrade"></div>
+        </div>
+        <div class="profMetric">
+            <div class="profScore metricScore"></div>
+            <div class="profAvgGrade metricGrade"></div>
+        </div>
+        <div class="showReviews">
+        </div>
+    </div>
+    
+    <section class="reviewsWrapper">
+        <div class="review">
+            <div class="reviewHeader">
+                <div class="reviewHeaderClass"> 
+                    <div class="reviewDate"></div>
+                </div>
+                <div class="reviewScore"></div>
+            </div>
+            <div class="reviewText">
+            </div>
+            <div class="reviewTextBook"></div>
+        </div>
+        </div>
+    </section>
+</div>
+
+
+
+<div class="profBox" id="staticBox">
     <div class="profName">
        DR. Daniel Challou PHD
     </div>
@@ -21,40 +55,27 @@
     
     <section class="reviewsWrapepr">
         <div class="review">
-        <div class="reviewHeader">
-            <div class="reviewHeaderClass">CSCI 6969 
-                <div class="reviewDate">1/20/2000</div>
+            <div class="reviewHeader">
+                <div class="reviewHeaderClass">CSCI 6969 
+                    <div class="reviewDate">1/20/2000</div>
+                </div>
+                <div class="reviewScore">Score: 6.9</div>
             </div>
-            <div class="reviewScore">Score: 6.9</div>
+            <div class="reviewText">
+            He is the best instructor in the department. 
+            The lectures are well organized, clearly delivered. Cute British accent. 
+            Caring for student's need and feedback. The materials are a little bit 
+            hard but I guess there's no one can make it more approachable than Carl!
+            </div>
+            <div class="reviewTextBook">TextBook: Barely cracked it open</div>
         </div>
-        <div class="reviewText">
-        He is the best instructor in the department. 
-        The lectures are well organized, clearly delivered. Cute British accent. 
-        Caring for student's need and feedback. The materials are a little bit 
-        hard but I guess there's no one can make it more approachable than Carl!
-        </div>
-        <div class="reviewTextBook">TextBook: Barely cracked it open</div>
-        </div>
-      <div class="review">
-        <div class="reviewHeader">Class: 12344 Date: 12345 TextBook: ???</div>
-            <div class="reviewHeader">Review Score....</div>  
-        He is the best instructor in the department. 
-        The lectures are well organized, clearly delivered. Cute British accent. 
-        Caring for student's need and feedback. The materials are a little bit 
-        hard but I guess there's no one can make it more approachable than Carl!</div>
-        <div class="review">
-        <div class="reviewHeader">Class: 12344 Date: 12345 TextBook: ???</div>
-            <div class="reviewHeader">Review Score....</div>    
-        He is the best instructor in the department. 
-        The lectures are well organized, clearly delivered. Cute British accent. 
-        Caring for student's need and feedback. The materials are a little bit 
-        hard but I guess there's no one can make it more approachable than Carl!</div>
     </section>
-    
-    
 </div>
 
+
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="data.js"></script>
 <script>
     $(".showReviews").on("click",function(e){
         var parent = e.target.parentElement.parentElement;
@@ -66,4 +87,105 @@
             parent.setAttribute("style","height:105px"); 
         }
     })
+
+
+function runTest(){
+    for(var prof in testProfs){
+        var size = testProfs[prof].length;
+            for(var i=0; i<size; i++){
+            var response = {prof:testProfs[prof][i]};
+            var node = createInfoNode(response);
+            $("body").append(node);
+        }
+    }
+}
+//runTest()
+
+function createInfoNode(response){
+	var prof = response.prof;
+	var profBox = createDiv("profBox");
+	var profName = createDiv("profName");
+	addText(profName,prof.name);
+	
+	var profMetricsWrapper = createDiv("profMetricsWrapper");
+	var profMetricsHeader = createDiv("profMetricsHeader");
+	var profScore = createDiv("profScore");
+	addText(profScore,"Avg. Score");
+	var profAvgGrade = createDiv("profAvgGrade");
+	addText(profAvgGrade,"Avg. Grade");
+	var profMetric = createDiv("profMetric");
+	var metricScore= createDiv("profScore metricScore");
+	addText(metricScore,prof.metrics.rating);
+	var metricGrade = createDiv("profAvgGrade metricGrade");
+	addText(metricGrade,prof.metrics.avgGrade);
+	var showReviews = createDiv("showReviews");
+	addText(showReviews,"Reviews");
+	showReviews.addEventListener("click",reviewsHandler);
+	var reviewsWrapper = createDiv("reviews","section")
+	
+	profBox.appendChild(profName);
+	profBox.appendChild(profMetricsWrapper);
+	profBox.appendChild(reviewsWrapper);
+	profMetricsWrapper.appendChild(profMetricsHeader);
+	profMetricsWrapper.appendChild(profMetric);
+	profMetricsWrapper.appendChild(showReviews);
+	profMetricsHeader.appendChild(profScore);
+	profMetricsHeader.appendChild(profAvgGrade);
+	profMetric.appendChild(metricScore);
+	profMetric.appendChild(metricGrade);
+	
+	
+	for(var review in prof.reviews){
+	    review = prof.reviews[review];
+		var reviewNode = createDiv("review");
+	 	var reviewHeader = createDiv("reviewHeader");
+	 	var reviewHeaderClass = createDiv("reviewHeaderClass");
+	 	addText(reviewHeaderClass,review.class);
+	 	var reviewDate = createDiv("reviewDate");
+	 	addText(reviewDate,review.date);
+	 	var reviewScore = createDiv("reviewScore");
+	 	addText(reviewScore,review.score);
+	 	var reviewText = createDiv("reviewText");
+	 	addText(reviewText,review.review);
+	 	var reviewTextBook = createDiv("reviewTextBook");
+	 	addText(reviewTextBook,review.textbook);
+	 	reviewsWrapper.appendChild(reviewNode);
+	 	reviewNode.appendChild(reviewHeader);
+	 	reviewNode.appendChild(reviewText);
+	 	reviewNode.appendChild(reviewTextBook);
+	 	reviewHeader.appendChild(reviewHeaderClass);
+	 	reviewHeaderClass.appendChild(reviewDate);
+	 	reviewHeader.appendChild(reviewScore);
+	}
+	return profBox;
+}
+
+
+    
+function createDiv(_class,tag){
+	if(tag === undefined)
+		tag = "div";
+	var node = document.createElement(tag);
+	node.className = _class;
+	return node;
+}
+
+function addText(div,text){
+    var textNode = document.createTextNode(text);
+    div.appendChild(textNode);
+}
+    
+function reviewsHandler(e){
+	var parent = e.target.parentElement.parentElement;
+    if(e.target.clicked == undefined){
+    	e.target.clicked = true;
+        parent.setAttribute("style","height:auto"); 
+    }else{
+        e.target.clicked = undefined;
+        parent.setAttribute("style","height:105px"); 
+    }
+}
+
+
+
 </script>
