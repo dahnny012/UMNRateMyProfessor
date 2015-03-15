@@ -32,7 +32,7 @@ function demo2(){
     }
     
    function search(fn){
-      var max = 20;
+      var max = 200;
       var offset = 0;
       var finished = 0;
       while(offset <= max){
@@ -46,7 +46,7 @@ function demo2(){
              $("li[class='listing PROFESSOR']").each(function(i, elem) {
                  var profPage = $(this).children("a").attr('href')
                  var profName = $(this).find('.main').text();
-                 //console.log(profName);
+                 console.log(profName);
                  var profOptions = {
                   host: 'www.ratemyprofessors.com',
                   path: profPage,
@@ -68,7 +68,7 @@ function demo2(){
                         var json = JSON.stringify(table);
                         var parse = JSON.parse(json);
                         fs.writeFileSync("data.js", "var testProfs = ");
-                        fs.writeFileSync("data,js",JSON.stringify(parse));
+                        fs.writeFileSync("data.js",JSON.stringify(parse));
                     }
                 },profOptions,offset);
              })
