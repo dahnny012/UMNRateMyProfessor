@@ -3,23 +3,22 @@ var size = links.length;
 var pattern  = /http:\/\/www\.umn\.edu\/lookup\?/;
 var MATCH = 0;
 var regex = /( [A-z]+\.?)/g;
-var classRegex = /([A-Z]+(.)+[0-9]+)/;
-var testProf = {"name":"Driessen, Michelle","metrics":{"rating":"4.0","avgGrade":"B-","scores":["Helpfulness 4.0","Clarity 4.0","Easiness 2.8"]},"classes":{"1061":"1061","10 62":"1062","CHEM1061":"CHEM1061","CHEM1021":"CHEM1021","CHEM1015":"CHEM1015","CHEM1065":"CHEM1065","CHEM1062":"CHEM1062","CHEMISTY":"CHEMISTY","CHEM1601":"CHE M1601"},"reviews":{"1061":{"class":"1061","date":" 02/17/2015","textbook":"Textbook Use: What textbook?","score":"4.33","review":" \r\n\t She' s the only teacher that I've been able to pass chemistry with. She is amazing and I would take her class any day. \r\n\t "},"CHEM 1061":{"class" :"CHEM 1061","date":" 01/15/2015","textbook":"Textbook Use: What textbook?","score":"3.33","review":" \r\n\t Her videos are nice and easy to u nderstand, but during her actual lectures she does not teach at all. You just do homework for an hour with a small group. In my opinion she thinks too highly of herself. \r\n\t "},"CHEM 1021":{"class":"CHEM 1021","date":" 12/04/2014","textbook":"Textbook Use: Essential to passing","score":"3.33","review":" \r\n\t Driessen does her best to explain concepts clearly and I thought she did a good job of it. She definitely wants you to succeed an d if you go talk to her outside of class, she's really helpful. I definitely recommend her as a prof! \r\n\t "}},"link":"www.ratemyprofessors.com /ShowRatings.jsp?tid=260962"};
+
 
 for(var i =0; i<size; i++){
 	if(links[i].href.search(pattern) == MATCH){
 		var className = getClassName(links[i]);
 		var profName = links[i].text.replace(regex,"").replace(",",", ");
-		var node = createNode(profName);
+		var node = createNode(profName,className);
 		var target = links[i];
 		target.parentNode.insertBefore(node, target.nextSibling);
 	}
 }
 
-var testResponse = {prof:testProf};
+//var testResponse = {prof:testProf};
 
 
-function createNode(){
+function createNode(profName,className){
 	var wrapper = document.createElement("div");
 	var node = document.createElement("img");
 	wrapper.appendChild(node);
@@ -35,8 +34,8 @@ function createNode(){
 		if(e.target.className == "prof"){
 			if(e.target.clicked == undefined){
 				e.target.clicked = true;
-				var infoNode = createInfoNode(testResponse);
-				e.target.parentNode.appendChild(infoNode);
+				var target = e.target.parentNode;
+				sendMsg(profName,className,target);
 			}else{
 				e.target.clicked = undefined;
 				removeNode(e)
@@ -67,10 +66,14 @@ function addText(div,text){
     div.appendChild(textNode);
 }
 
-function sendMsg(name,_class){
-	chrome.runtime.sendMessage({greeting: "hello",profName:name,profClass: _class}, 
-	createInfoNode);
-}
+function sendMsg(name,_class,target){
+	console.log("Sending msg");
+	chrome.runtime.sendMessage({msg: "ratemyprofessor",profName:name,profClass: _class}, 
+	function(response){
+		var node = 	createInfoNode(response);
+		target.appendChild(node);
+	});
+};
 
 function reviewsHandler(e){
 	var parent = e.target.parentElement.parentElement;
@@ -90,8 +93,7 @@ function getClassName(node){
 	}
 	if(i==5){
 		parent = parent.childNodes[5].childNodes[1].data;
-		parent = parent.substr(classRegex);
-		console.log(parent);
+		parent = parent.match(/[A-z]+/)[0]+parent.match(/[0-9]+/)[0];
 	}else{
 		return "";
 	}
