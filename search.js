@@ -3,7 +3,7 @@ var cheerio = require('cheerio');
 var fs = require("fs");
 var finished = 1;
 var glob_offset = 0;
-var DONE = 200;
+var DONE =0;
 var timer;
 
 function demo2(){
@@ -64,7 +64,8 @@ function demo2(){
 					prof["link"] = "www.ratemyprofessors.com"+profPage;
                     addProf(prof,table)
                     finished++;
-                    if(finished >= DONE - 1){
+                    if(finished == DONE){
+						console.log("Logging to file");
                         clearInterval(timer);
                         var json = JSON.stringify(table);
                         var parse = JSON.parse(json);
@@ -193,9 +194,10 @@ function demo2(){
             console.log(prof);
         },options);
    }
-     timer = setInterval(function(){
-         search(glob_offset,glob_offset+100);
-     },5000);
+		DONE = 3924;
+	     //timer = setInterval(function(){
+         search(glob_offset,glob_offset+3924);
+ 	    //},7000);
    //searchProfessor();
 }
 
