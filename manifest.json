@@ -15,6 +15,7 @@
   },
   "content_scripts":[{
 	"js":["content.js"],
+	"css":["mockup.css"],
 	"matches": ["*://onestop2.umn.edu/*"],
 	"run_at": "document_end"
   }]

@@ -2,15 +2,20 @@ var links = document.getElementsByTagName("a");
 var size = links.length;
 var pattern  = /http:\/\/www\.umn\.edu\/lookup\?/;
 var MATCH = 0;
-var regex = /( [A-z]+\.?)/
+var regex = /( [A-z]+\.?)/g
+var testProf = {"name":"Driessen, Michelle","metrics":{"rating":"4.0","avgGrade":"B-","scores":["Helpfulness 4.0","Clarity 4.0","Easiness 2.8"]},"classes":{"1061":"1061","10 62":"1062","CHEM1061":"CHEM1061","CHEM1021":"CHEM1021","CHEM1015":"CHEM1015","CHEM1065":"CHEM1065","CHEM1062":"CHEM1062","CHEMISTY":"CHEMISTY","CHEM1601":"CHE M1601"},"reviews":{"1061":{"class":"1061","date":" 02/17/2015","textbook":"Textbook Use: What textbook?","score":"4.33","review":" \r\n\t She' s the only teacher that I've been able to pass chemistry with. She is amazing and I would take her class any day. \r\n\t "},"CHEM 1061":{"class" :"CHEM 1061","date":" 01/15/2015","textbook":"Textbook Use: What textbook?","score":"3.33","review":" \r\n\t Her videos are nice and easy to u nderstand, but during her actual lectures she does not teach at all. You just do homework for an hour with a small group. In my opinion she thinks too highly of herself. \r\n\t "},"CHEM 1021":{"class":"CHEM 1021","date":" 12/04/2014","textbook":"Textbook Use: Essential to passing","score":"3.33","review":" \r\n\t Driessen does her best to explain concepts clearly and I thought she did a good job of it. She definitely wants you to succeed an d if you go talk to her outside of class, she's really helpful. I definitely recommend her as a prof! \r\n\t "}},"link":"www.ratemyprofessors.com /ShowRatings.jsp?tid=260962"};
+
 
 for(var i =0; i<size; i++){
 	if(links[i].href.search(pattern) == MATCH){
-		var node = createNode();
+		var profName = links[i].text.replace(regex,"").replace(",",", ");
+		var node = createNode(profName);
 		var target = links[i];
 		target.parentNode.insertBefore(node, target.nextSibling);
 	}
 }
+
+var testResponse = {prof:testProf};
 
 
 function createNode(){
@@ -24,19 +29,17 @@ function createNode(){
 	node.setAttribute("height","20px");
 	node.src ="http://icons.iconarchive.com/icons/wineass/ios7-redesign/512/Sample-icon.png";
 
-	wrapper.addEventListener("click",function(e){
-		console.log(e.target.clicked);
-		if(e.target.clicked == undefined){
-			var box = document.createElement("span");
-			box.className = "profBox";
-			box.style.display = "inline";
-			box.setAttribute("style","position:absolute;\
-			height:200px;width:300px;background:black");
-			e.target.clicked = true;
-			e.target.parentElement.appendChild(box);
-		}else{
-			e.target.clicked = undefined;
-			removeNode(e)
+	node.addEventListener("click",function(e){
+		console.log(e.target.className);
+		if(e.target.className == "prof"){
+			if(e.target.clicked == undefined){
+				e.target.clicked = true;
+				var infoNode = createInfoNode(testResponse);
+				e.target.parentNode.appendChild(infoNode);
+			}else{
+				e.target.clicked = undefined;
+				removeNode(e)
+			}
 		}
 	},true);
 	return wrapper;
@@ -50,54 +53,6 @@ function removeNode(e){
 		parent.removeChild(parent.childNodes[1]); 
 }
 
-
-function createInfoNode(response){
-	var prof = response.prof;
-	var profBox = createDiv("profBox");
-	var profName = createDiv("profName");
-	var profMetricsWrapper = createDiv("profMetricsWrapper");
-	var profMetricsHeader = createDiv("profMetricsHeader");
-	var profScore = createDiv("profScore");
-	var profAvgGrade = createDiv("profAvgGrade");
-	var profMetric = createDiv("profMetric");
-	var metricScore= createDiv("profScore metricScore");
-	var metricGrade = createDiv("profAvgGrade metricGrade");
-	var showReviews = createDiv("showReviews");
-	
-	profBox.appendChild(profName);
-	profBox.appendChild(profMetricsWrapper);
-	profBox.appendChild(profMetric);
-	profMetricsWrapper.appendChild(profMetricsHeader);
-	profMetricsWrapper.appendChild(profMetric);
-	profMetricsWrapper.appendChild(showReviews);
-	profMetricsHeader.appendChild(profScore);
-	profMetricsHeader.appendChild(profAvgGrade);
-	profMetric.appendChild(metricScore);
-	profMetric.appendChild(metricGrade);
-	
-	var reviews = prof.reviews;
-	var reviewsWrapper = createDiv("reviews","section")
-
-	for(var review in reviews){
-		var reviewNode = createDiv("review");
-	 	var reviewHeader = createDiv("reviewHeader");
-	 	var reviewHeaderClass = createDiv("reviewHeaderClass");
-	 	var reviewDate = createDiv("reviewDate");
-	 	var reviewScore = createDiv("reviewScore");
-	 	var reviewText = createDiv("reviewText");
-	 	var reviewTextBook = createDiv("reviewTextBook");
-	 	reviewsWrapper.appendChild(reviewNode);
-	 	reviewNode.appendChild(reviewHeader);
-	 	reviewNode.appendChild(reviewText);
-	 	reviewNode.appendChild(reviewTextBook);
-	 	reviewHeader.appendChild(reviewHeaderClass);
-	 	reviewHeaderClass.appendChild(reviewDate);
-	 	reviewHeader.appendChild(reviewScore);
-	
-	}
-	return profBox;
-}
-
 function createDiv(_class,tag){
 	if(tag === undefined)
 		tag = "div";
@@ -106,8 +61,87 @@ function createDiv(_class,tag){
 	return node;
 }
 
+function addText(div,text){
+    var textNode = document.createTextNode(text);
+    div.appendChild(textNode);
+}
 
 function sendMsg(name,_class){
 	chrome.runtime.sendMessage({greeting: "hello",profName:name,profClass: _class}, 
 	createInfoNode);
+}
+
+function reviewsHandler(e){
+	var parent = e.target.parentElement.parentElement;
+    if(e.target.clicked == undefined){
+    	e.target.clicked = true;
+        parent.setAttribute("style","height:auto"); 
+    }else{
+        e.target.clicked = undefined;
+        parent.setAttribute("style","height:105px"); 
+    }
+}
+
+function createInfoNode(response){
+	var prof = response.prof;
+	var profBox = createDiv("profBox");
+	var profName = createDiv("profName");
+	addText(profName,prof.name);
+	var profLink = createDiv("profLink","a");
+	var link = "http://"+prof["link"].replace(" ","");
+	profLink.setAttribute("href",link);
+	profLink.setAttribute("target","_blank");
+	profLink.appendChild(profName);
+	
+	var profMetricsWrapper = createDiv("profMetricsWrapper");
+	var profMetricsHeader = createDiv("profMetricsHeader");
+	var profScore = createDiv("profScore");
+	addText(profScore,"Avg. Score");
+	var profAvgGrade = createDiv("profAvgGrade");
+	addText(profAvgGrade,"Avg. Grade");
+	var profMetric = createDiv("profMetric");
+	var metricScore= createDiv("profScore metricScore");
+	addText(metricScore,prof.metrics.rating);
+	var metricGrade = createDiv("profAvgGrade metricGrade");
+	addText(metricGrade,prof.metrics.avgGrade);
+	var showReviews = createDiv("showReviews");
+	addText(showReviews,"Reviews");
+	showReviews.addEventListener("click",reviewsHandler);
+	var reviewsWrapper = createDiv("reviews","section")
+	
+	profBox.appendChild(profLink);
+	profBox.appendChild(profMetricsWrapper);
+	profBox.appendChild(reviewsWrapper);
+	profMetricsWrapper.appendChild(profMetricsHeader);
+	profMetricsWrapper.appendChild(profMetric);
+	profMetricsWrapper.appendChild(showReviews);
+	profMetricsHeader.appendChild(profScore);
+	profMetricsHeader.appendChild(profAvgGrade);
+	profMetric.appendChild(metricScore);
+	profMetric.appendChild(metricGrade);
+	
+	
+	for(var review in prof.reviews){
+	    review = prof.reviews[review];
+		var reviewNode = createDiv("review");
+	 	var reviewHeader = createDiv("reviewHeader");
+	 	var reviewHeaderClass = createDiv("reviewHeaderClass");
+	 	addText(reviewHeaderClass,review.class);
+	 	var reviewDate = createDiv("reviewDate");
+	 	addText(reviewDate,review.date);
+	 	var reviewScore = createDiv("reviewScore");
+	 	addText(reviewScore,review.score);
+	 	var reviewText = createDiv("reviewText");
+	 	addText(reviewText,review.review);
+	 	var reviewTextBook = createDiv("reviewTextBook");
+	 	addText(reviewTextBook,review.textbook);
+	 	reviewsWrapper.appendChild(reviewNode);
+	 	reviewNode.appendChild(reviewHeader);
+	 	reviewNode.appendChild(reviewText);
+	 	reviewNode.appendChild(reviewTextBook);
+	 	reviewHeader.appendChild(reviewHeaderClass);
+	 	reviewHeaderClass.appendChild(reviewDate);
+	 	reviewHeader.appendChild(reviewScore);
+	}
+	return profBox;
 }
