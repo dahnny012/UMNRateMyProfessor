@@ -24,7 +24,6 @@ div{
 
 #staticBox{
     left:400px;
-    display:none;
 }
 
 #emptyBox{
@@ -42,6 +41,14 @@ div{
     width:90%;
     padding-bottom:5px;
     margin:0 auto;
+}
+
+.profLink{
+	color:black;
+}
+
+.profLink:hover{
+	color:#0C72AD
 }
 
 
@@ -81,7 +88,12 @@ div{
     margin-left:auto;
     margin-right:auto;
     font-size:15px;
+	background:#EAEAEA;
+	text-align:center;
+	cursor:hand;
+	cursor:pointer;
 }
+
 
 .reviewHeader{
     padding-right:10px;
