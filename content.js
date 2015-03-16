@@ -2,6 +2,8 @@ var links = document.getElementsByTagName("a");
 var size = links.length;
 var pattern  = /http:\/\/www\.umn\.edu\/lookup\?/;
 var MATCH = 0;
+var regex = /( [A-z]+\.?)/
+
 for(var i =0; i<size; i++){
 	if(links[i].href.search(pattern) == MATCH){
 		var node = createNode();
