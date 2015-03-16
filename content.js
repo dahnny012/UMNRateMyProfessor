@@ -7,9 +7,9 @@ var regex = /( [A-z]+\.?)/g;
 
 for(var i =0; i<size; i++){
 	if(links[i].href.search(pattern) == MATCH){
-		var className = getClassName(links[i]);
+		var profClass = getClassName(links[i]);
 		var profName = links[i].text.replace(regex,"").replace(",",", ");
-		var node = createNode(profName,className);
+		var node = createNode(profName,profClass);
 		var target = links[i];
 		target.parentNode.insertBefore(node, target.nextSibling);
 	}
@@ -18,7 +18,7 @@ for(var i =0; i<size; i++){
 //var testResponse = {prof:testProf};
 
 
-function createNode(profName,className){
+function createNode(profName,profClass){
 	var wrapper = document.createElement("div");
 	var node = document.createElement("img");
 	wrapper.appendChild(node);
@@ -35,7 +35,7 @@ function createNode(profName,className){
 			if(e.target.clicked == undefined){
 				e.target.clicked = true;
 				var target = e.target.parentNode;
-				sendMsg(profName,className,target);
+				sendMsg(profName,profClass,target);
 			}else{
 				e.target.clicked = undefined;
 				removeNode(e)
@@ -68,7 +68,7 @@ function addText(div,text){
 
 function sendMsg(name,_class,target){
 	console.log("Sending msg");
-	chrome.runtime.sendMessage({msg: "ratemyprofessor",profName:name,profClass: _class}, 
+	chrome.runtime.sendMessage({msg: "ratemyprofessor",profName:name,profClass: _class},
 	function(response){
 		var node = 	createInfoNode(response);
 		target.appendChild(node);
