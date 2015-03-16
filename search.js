@@ -61,6 +61,7 @@ function demo2(){
                     var reviews = getReviews($);
                     var metrics = {"rating":rating,"avgGrade":avgGrade,"scores":scores};
                     var prof = createProf(profName,classes,metrics,reviews);
+					prof["link"] = "www.ratemyprofessors.com"+profPage;
                     addProf(prof,table)
                     finished++;
                     if(finished >= DONE - 1){

@@ -107,6 +107,10 @@ function createInfoNode(response){
 	var profBox = createDiv("profBox");
 	var profName = createDiv("profName");
 	addText(profName,prof.name);
+	var profLink = createDiv("profLink","a");
+	profLink.setAttribute("href",prof["link"]);
+	profLink.setAttribute("target","_blank");
+	profLink.appendChild(profName);
 	
 	var profMetricsWrapper = createDiv("profMetricsWrapper");
 	var profMetricsHeader = createDiv("profMetricsHeader");
@@ -124,7 +128,7 @@ function createInfoNode(response){
 	showReviews.addEventListener("click",reviewsHandler);
 	var reviewsWrapper = createDiv("reviews","section")
 	
-	profBox.appendChild(profName);
+	profBox.appendChild(profLink);
 	profBox.appendChild(profMetricsWrapper);
 	profBox.appendChild(reviewsWrapper);
 	profMetricsWrapper.appendChild(profMetricsHeader);
