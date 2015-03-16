@@ -5,6 +5,7 @@ var finished = 1;
 var glob_offset = 0;
 var DONE =0;
 var timer;
+var filename =0;
 
 function demo2(){
     var http = require('http');
@@ -68,8 +69,7 @@ function demo2(){
 						console.log("Logging to file");
                         clearInterval(timer);
                         var json = JSON.stringify(table);
-                        var parse = JSON.parse(json);
-                        fs.writeFileSync("data.js","var testProfs = " + JSON.stringify(parse));
+                        fs.writeFileSync(filename,"var testProfs = " + json);
                     }
                 },profOptions,offset);
              })
@@ -194,9 +194,11 @@ function demo2(){
             console.log(prof);
         },options);
    }
-		DONE = 3924;
+		DONE = 425;
+		glob_offset = 3925;
+		filename = "data8.js"
 	     //timer = setInterval(function(){
-         search(glob_offset,glob_offset+3924);
+         search(glob_offset,glob_offset+DONE);
  	    //},7000);
    //searchProfessor();
 }
