@@ -1,12 +1,13 @@
 var needle = require('needle');
 var cheerio = require('cheerio');
 var fs = require("fs");
-var finished = 0;
-
+var finished = 1;
+var glob_offset = 0;
+var DONE = 200;
+var timer;
 
 function demo2(){
     var http = require('http');
-    http.globalAgent.maxSockets = 1000;
     var table = {}
 
 
@@ -31,11 +32,9 @@ function demo2(){
          http.request(options, callback).end();
     }
     
-   function search(fn){
-      var max = 200;
-      var offset = 0;
-      var finished = 0;
-      while(offset <= max){
+   function search(offset,max){
+      glob_offset = max;
+      while(offset < max){
           var options = {
           host: 'www.ratemyprofessors.com',
           path: '/search.jsp?query=university+of+minnesota+twin+cities&queryoption=HEADER&stateselect=&country=&dept=&queryBy=&facetSearch=&schoolName=&offset='+offset+'&max=20',
@@ -46,7 +45,6 @@ function demo2(){
              $("li[class='listing PROFESSOR']").each(function(i, elem) {
                  var profPage = $(this).children("a").attr('href')
                  var profName = $(this).find('.main').text();
-                 console.log(profName);
                  var profOptions = {
                   host: 'www.ratemyprofessors.com',
                   path: profPage,
@@ -54,7 +52,8 @@ function demo2(){
                 };
                 getPage(function(body,offset){
                     $ = cheerio.load(body);
-                    //console.log(profName);
+                    console.log(profName);
+                    console.log(finished);
                     var avgGrade = getGrade($);
                     var rating = getRating($);
                     var classes = getClasses($);
@@ -64,11 +63,11 @@ function demo2(){
                     var prof = createProf(profName,classes,metrics,reviews);
                     addProf(prof,table)
                     finished++;
-                    if(finished >= (max + 19)){
+                    if(finished >= DONE - 1){
+                        clearInterval(timer);
                         var json = JSON.stringify(table);
                         var parse = JSON.parse(json);
-                        fs.writeFileSync("data.js", "var testProfs = ");
-                        fs.writeFileSync("data.js",JSON.stringify(parse));
+                        fs.writeFileSync("data.js","var testProfs = " + JSON.stringify(parse));
                     }
                 },profOptions,offset);
              })
@@ -193,12 +192,21 @@ function demo2(){
             console.log(prof);
         },options);
    }
-   search();
+     timer = setInterval(function(){
+         search(glob_offset,glob_offset+100);
+     },5000);
    //searchProfessor();
 }
 
 demo2()
 
+/*
+function searchTimer(offset,max){
+    setTimeout(function() {
+        search(offset,max)
+        searchTimer(offset+100,max+100);
+    }, 5000);
+}*/
 
 
 
