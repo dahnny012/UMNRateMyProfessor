@@ -1,23 +1,28 @@
-var divs = document.getElementsByClassName("description");
-var size = divs.length;
-var pattern  = /http:\/\/www\.umn\.edu\/lookup\?/;
 var MATCH = 0;
 var regex = /( [A-z]+\.?)/g;
 var icon = chrome.extension.getURL("/icon.png");
 
-for(var i =0; i<size; i++){
-    var links = divs[i].getElementsByTagName("a");
-    var linkSize = links.length;
-    for(var j=0; j<linkSize; j++) {
-        if (links[j].href.search(pattern) == MATCH) {
-            var profClass = getClassName(links[j]);
-            var profName = links[j].text.replace(regex, "").replace(",", ", ");
-            var node = createNode(profName, profClass);
-            var target = links[j];
-            target.parentNode.insertBefore(node, target.nextSibling);
-        }
-    }
+
+function init(){
+	var divs = document.getElementsByClassName("description");
+	var size = divs.length;
+	var pattern  = /http:\/\/www\.umn\.edu\/lookup\?/;
+	
+	for(var i =0; i<size; i++){
+		var links = divs[i].getElementsByTagName("a");
+		var linkSize = links.length;
+		for(var j=0; j<linkSize; j++) {
+			if (links[j].href.search(pattern) == MATCH) {
+				var profClass = getClassName(links[j]);
+				var profName = links[j].text.replace(regex, "").replace(",", ", ");
+				var node = createNode(profName, profClass);
+				var target = links[j];
+				target.parentNode.insertBefore(node, target.nextSibling);
+			}
+		}
+	}
 }
+init();
 
 function createNode(profName,profClass){
 	var wrapper = document.createElement("div");
@@ -39,6 +44,7 @@ function createNode(profName,profClass){
 				sendMsg(profName,profClass,target);
 			}else{
 				e.target.clicked = undefined;
+				e.getElementsByClassName[0].removeEventListener("click",reviewsHandler);
 				removeNode(e)
 			}
 		}
@@ -107,7 +113,7 @@ function createInfoNode(response){
         return blankNode();
 	var profBox = createDiv("profBox");
 	var profName = createDiv("profName");
-	addText(profName,prof.name);
+	profName.innerHtml = prof.name;
 	var profLink = createDiv("profLink","a");
 	var link = "http://"+prof["link"].replace(" ","");
 	profLink.setAttribute("href",link);
@@ -117,16 +123,16 @@ function createInfoNode(response){
 	var profMetricsWrapper = createDiv("profMetricsWrapper");
 	var profMetricsHeader = createDiv("profMetricsHeader");
 	var profScore = createDiv("profScore");
-	addText(profScore,"Avg. Score");
+	profScore.innerHtml = "Avg. Score";
 	var profAvgGrade = createDiv("profAvgGrade");
-	addText(profAvgGrade,"Avg. Grade");
+	profAvgGrade.innerHtml ="Avg. Grade";
 	var profMetric = createDiv("profMetric");
 	var metricScore= createDiv("profScore metricScore");
-	addText(metricScore,prof.metrics.rating);
+	metricScore.innerHtml = prof.metrics.rating;
 	var metricGrade = createDiv("profAvgGrade metricGrade");
-	addText(metricGrade,prof.metrics.avgGrade);
+	metricGrade.innerHtml = prof.metrics.avgGrade;
 	var showReviews = createDiv("showReviews");
-	addText(showReviews,"Reviews");
+	showReviews.innerHtml = "Reviews";
 	showReviews.addEventListener("click",reviewsHandler);
 	var reviewsWrapper = createDiv("reviews","section")
 	
@@ -147,15 +153,15 @@ function createInfoNode(response){
 		var reviewNode = createDiv("review");
 	 	var reviewHeader = createDiv("reviewHeader");
 	 	var reviewHeaderClass = createDiv("reviewHeaderClass");
-	 	addText(reviewHeaderClass,review.class);
+	 	reviewHeaderClass.innerHtml = review.class;
 	 	var reviewDate = createDiv("reviewDate");
-	 	addText(reviewDate,review.date);
+	 	reviewDate.innerHtml = review.date;
 	 	var reviewScore = createDiv("reviewScore");
-	 	addText(reviewScore,review.score);
+	 	reviewScore.innherHtml = review.score;
 	 	var reviewText = createDiv("reviewText");
-	 	addText(reviewText,review.review);
+	 	reviewText.innerHtml = review.review;
 	 	var reviewTextBook = createDiv("reviewTextBook");
-	 	addText(reviewTextBook,review.textbook);
+	 	reviewTextBook.innerHtml = review.textbook;
 	 	reviewsWrapper.appendChild(reviewNode);
 	 	reviewNode.appendChild(reviewHeader);
 	 	reviewNode.appendChild(reviewText);
@@ -170,7 +176,7 @@ function createInfoNode(response){
 function blankNode() {
     var profBox = createDiv("profBox");
     var profName = createDiv("profName");
-    addText(profName,"No information found");
+    profName.innerHtml = "No information found";
     var profLink = createDiv("profLink","a");
     var link = "http://ratemyprofessor.com";
     profLink.setAttribute("href",link);
@@ -179,14 +185,14 @@ function blankNode() {
     var profMetricsWrapper = createDiv("profMetricsWrapper");
     var profMetricsHeader = createDiv("profMetricsHeader");
     var profScore = createDiv("profScore");
-    addText(profScore,"Avg. Score");
+    profScore.innerHtml = "Avg. Score";
     var profAvgGrade = createDiv("profAvgGrade");
-    addText(profAvgGrade,"Avg. Grade");
+    profAvgGrade.innerHtml = "Avg. Grade";
     var profMetric = createDiv("profMetric");
     var metricScore= createDiv("profScore metricScore");
-    addText(metricScore,"N/A");
+    metricScore.innerHtml = "N/A";
     var metricGrade = createDiv("profAvgGrade metricGrade");
-    addText(metricGrade,"N/A");
+    metricGrade.innerHtml = "N/A";
     var showReviews = createDiv("showReviews");
     addText(showReviews,"Reviews");
 
