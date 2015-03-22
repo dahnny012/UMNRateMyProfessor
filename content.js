@@ -1,22 +1,23 @@
-var links = document.getElementsByTagName("a");
-var size = links.length;
+var divs = document.getElementsByClassName("description");
+var size = divs.length;
 var pattern  = /http:\/\/www\.umn\.edu\/lookup\?/;
 var MATCH = 0;
 var regex = /( [A-z]+\.?)/g;
-
+var icon = chrome.extension.getURL("/icon.png");
 
 for(var i =0; i<size; i++){
-	if(links[i].href.search(pattern) == MATCH){
-		var profClass = getClassName(links[i]);
-		var profName = links[i].text.replace(regex,"").replace(",",", ");
-		var node = createNode(profName,profClass);
-		var target = links[i];
-		target.parentNode.insertBefore(node, target.nextSibling);
-	}
+    var links = divs[i].getElementsByTagName("a");
+    var linkSize = links.length;
+    for(var j=0; j<linkSize; j++) {
+        if (links[j].href.search(pattern) == MATCH) {
+            var profClass = getClassName(links[j]);
+            var profName = links[j].text.replace(regex, "").replace(",", ", ");
+            var node = createNode(profName, profClass);
+            var target = links[j];
+            target.parentNode.insertBefore(node, target.nextSibling);
+        }
+    }
 }
-
-//var testResponse = {prof:testProf};
-
 
 function createNode(profName,profClass){
 	var wrapper = document.createElement("div");
@@ -25,9 +26,9 @@ function createNode(profName,profClass){
 	wrapper.style.display = "inline";
 	wrapper.className = "profWrapper";
 	node.className = "prof";
-	node.setAttribute("width","20px");
-	node.setAttribute("height","20px");
-	node.src ="http://icons.iconarchive.com/icons/wineass/ios7-redesign/512/Sample-icon.png";
+	node.setAttribute("width","24px");
+	node.setAttribute("height","24px");
+	node.src = icon;
 
 	node.addEventListener("click",function(e){
 		console.log(e.target.className);
@@ -102,6 +103,8 @@ function getClassName(node){
 
 function createInfoNode(response){
 	var prof = response.prof;
+    if(prof == undefined)
+        return blankNode();
 	var profBox = createDiv("profBox");
 	var profName = createDiv("profName");
 	addText(profName,prof.name);
@@ -162,6 +165,42 @@ function createInfoNode(response){
 	 	reviewHeader.appendChild(reviewScore);
 	}
 	return profBox;
+}
+
+function blankNode() {
+    var profBox = createDiv("profBox");
+    var profName = createDiv("profName");
+    addText(profName,"No information found");
+    var profLink = createDiv("profLink","a");
+    var link = "http://ratemyprofessor.com";
+    profLink.setAttribute("href",link);
+    profLink.setAttribute("target","_blank");
+    profLink.appendChild(profName);
+    var profMetricsWrapper = createDiv("profMetricsWrapper");
+    var profMetricsHeader = createDiv("profMetricsHeader");
+    var profScore = createDiv("profScore");
+    addText(profScore,"Avg. Score");
+    var profAvgGrade = createDiv("profAvgGrade");
+    addText(profAvgGrade,"Avg. Grade");
+    var profMetric = createDiv("profMetric");
+    var metricScore= createDiv("profScore metricScore");
+    addText(metricScore,"N/A");
+    var metricGrade = createDiv("profAvgGrade metricGrade");
+    addText(metricGrade,"N/A");
+    var showReviews = createDiv("showReviews");
+    addText(showReviews,"Reviews");
+
+    profBox.appendChild(profLink);
+    profBox.appendChild(profMetricsWrapper);
+    profMetricsWrapper.appendChild(profMetricsHeader);
+    profMetricsWrapper.appendChild(profMetric);
+    profMetricsWrapper.appendChild(showReviews);
+    profMetricsHeader.appendChild(profScore);
+    profMetricsHeader.appendChild(profAvgGrade);
+    profMetric.appendChild(metricScore);
+    profMetric.appendChild(metricGrade);
+
+    return profBox;
 }
 
 
