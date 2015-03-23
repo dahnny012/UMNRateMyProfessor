@@ -44,7 +44,6 @@ function createNode(profName,profClass){
 				sendMsg(profName,profClass,target);
 			}else{
 				e.target.clicked = undefined;
-				e.getElementsByClassName[0].removeEventListener("click",reviewsHandler);
 				removeNode(e)
 			}
 		}
@@ -72,31 +71,18 @@ function sendMsg(name,_class,target){
 	console.log("Sending msg");
 	chrome.runtime.sendMessage({msg: "ratemyprofessor",profName:name,profClass: _class},
 	function(response){
-		var node = 	createInfoNode2(response);
-		target.innerHTML =  [target.innerHTML,node].join("")
+		var node = 	createInfoNode(response);
+		target.appendChild(node);
 	});
 };
 
 function reviewsHandler(e){
-	if(e.className != "showReviews")
-		return;
 	var parent = e.target.parentElement.parentElement;
     if(e.target.clicked == undefined){
     	e.target.clicked = true;
         parent.setAttribute("style","height:auto"); 
     }else{
         e.target.clicked = undefined;
-        parent.setAttribute("style","height:105px"); 
-    }
-}
-
-function reviewsHandler2(){
-	var parent = event.target.parentElement.parentElement;
-    if(event.target.clicked == undefined){
-    	event.target.clicked = true;
-        parent.setAttribute("style","height:auto"); 
-    }else{
-        event.target.clicked = undefined;
         parent.setAttribute("style","height:105px"); 
     }
 }
@@ -121,12 +107,10 @@ function createInfoNode2(response){
         return blankNode();
     var profBox = 
     ["<div class='profBox'>",
-        "<div class='profName'>",
         "<a class='profLink' href='","http://",prof["link"].replace(" ","")
-        ,"' target=_blank>",prof.name,
-        "</a>",
-        "</div>",
-        "<div class='profMetricsWrapper'>",
+        ,"' target=_blank>",
+            "<div class='profName'>",prof.name,"</div>","</a>",
+        "<div class='profMetricsWrapper'",
             "<div class='profMetricsHeader'>",
                 "<div class='profScore'>Avg. Score</div>"
                 ,"<div class='profAvgGrade'>Avg. Grade</div>"
@@ -139,7 +123,7 @@ function createInfoNode2(response){
                 prof.metrics.avgGrade
                 ,"</div>"
             ,"</div>",
-            "<div class='showReviews' onclick='reviewsHandler2()'>Reviews</div>"
+            "<div class='showReviews'>Reviews</div>"
         ,"</div>",
         "<section class='reviewsWrapper'>"
         ]
@@ -167,7 +151,9 @@ function createInfoNode2(response){
         // Finish
         profBox.push("</section>")
         profBox.push("</div>")
-        return profBox.join("");
+        return profBox.join();
+        
+    
 }
 
 function createInfoNode(response){
@@ -271,5 +257,4 @@ function blankNode() {
 
     return profBox;
 }
-
 
