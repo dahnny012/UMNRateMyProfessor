@@ -36,7 +36,7 @@
 
 
 
-<div class="profBox" id="staticBox">
+<div class="profBox" id="emptyBox">
     <div class="profName">
 		<a class="profLink" href="" target="_blank">No information found</a>
     </div>
@@ -60,7 +60,10 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="data.js"></script>
 <script>
-    $(".showReviews").on("click",function(e){
+    
+
+$(".showReviews").on("click",function(e){
+        console.log("gg");
         var parent = e.target.parentElement.parentElement;
         if(e.target.clicked == undefined){
             e.target.clicked = true;
@@ -69,20 +72,76 @@
             e.target.clicked = undefined;
             parent.setAttribute("style","height:105px"); 
         }
-    })
-
+})
 
 function runTest(){
     for(var prof in testProfs){
         var size = testProfs[prof].length;
             for(var i=0; i<size; i++){
             var response = {prof:testProfs[prof][i]};
-            var node = createInfoNode(response);
+            var node = createInfoNode2(response);
             $("body").append(node);
         }
     }
 }
-//runTest()
+runTest()
+
+
+function createInfoNode2(response){
+    var prof = response.prof;
+    if(prof == undefined)
+        return blankNode();
+    var profBox = 
+    ["<div class='profBox'>",
+        "<div class='profName'>",
+        "<a class='profLink' href='","http://",prof["link"].replace(" ","")
+        ,"' target=_blank>",prof.name,
+        "</a>",
+        "</div>",
+        "<div class='profMetricsWrapper'>",
+            "<div class='profMetricsHeader'>",
+                "<div class='profScore'>Avg. Score</div>"
+                ,"<div class='profAvgGrade'>Avg. Grade</div>"
+            ,"</div>"
+            ,"<div class='profMetric'>",
+                "<div class='profScore metricScore'>",
+                prof.metrics.rating
+                ,"</div>"
+                ,"<div class='profAvgGrade metricGrade'>",
+                prof.metrics.avgGrade
+                ,"</div>"
+            ,"</div>",
+            "<div class='showReviews' onclick='reviewsHandler()'>Reviews</div>"
+        ,"</div>",
+        "<section class='reviewsWrapper'>"
+        ]
+        
+        // Add reviews
+        for(var review in prof.reviews){
+            review = prof.reviews[review];
+	        profBox.push("<div class='review'>");
+	        profBox.push("<div class='reviewHeader'>");
+	        profBox.push("<div class='reviewHeaderClass'>");
+	        profBox.push(review.class);
+	        profBox.push("<div class='reviewDate'>");
+	        profBox.push(review.date);
+	        profBox.push("</div></div><div class='reviewScore'>");
+	        profBox.push(review.score);
+	        profBox.push("</div></div>");
+	        profBox.push("<div class='reviewText'>");
+	        profBox.push(review.review);
+	        profBox.push("</div>");
+	        profBox.push("<div class='reviewTextBook'>")
+	        profBox.push(review.textBook);
+	        profBox.push("</div></div>");
+        }
+        
+        // Finish
+        profBox.push("</section>")
+        profBox.push("</div>")
+        return profBox.join("");
+}
+
 
 function createInfoNode(response){
 	var prof = response.prof;
@@ -162,13 +221,13 @@ function addText(div,text){
     div.appendChild(textNode);
 }
     
-function reviewsHandler(e){
-	var parent = e.target.parentElement.parentElement;
-    if(e.target.clicked == undefined){
-    	e.target.clicked = true;
+function reviewsHandler(){
+	var parent = event.target.parentElement.parentElement;
+    if(event.target.clicked == undefined){
+    	event.target.clicked = true;
         parent.setAttribute("style","height:auto"); 
     }else{
-        e.target.clicked = undefined;
+        event.target.clicked = undefined;
         parent.setAttribute("style","height:105px"); 
     }
 }
