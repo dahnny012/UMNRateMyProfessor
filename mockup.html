@@ -1,8 +1,10 @@
 <link rel="stylesheet"type="text/css" href="mockup.css">
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300' rel='stylesheet' type='text/css'>
 
-<div class="profBox" id="emptyBox">
+
+<div class="profBox" id="staticBox">
     <div class="profName">An Empty Name
+    <img src="http://umnratemyprofessor-dahnny012.c9.io:8080/"></img>
     </div>
     <div class="profMetricsWrapper">
         <div class="profMetricsHeader">
@@ -61,6 +63,9 @@
 <script src="data.js"></script>
 <script>
     
+var client = new XMLHttpRequest();
+client.open("GET","http://umnratemyprofessor-dahnny012.c9.io:8080/");
+client.send();
 
 $(".showReviews").on("click",function(e){
         console.log("gg");
@@ -78,8 +83,8 @@ function runTest(){
     for(var prof in testProfs){
         var size = testProfs[prof].length;
             for(var i=0; i<size; i++){
-            var response = {prof:testProfs[prof][i]};
-            var node = createInfoNode2(response);
+            var response = {prof:undefined};
+            var node = createInfoNode(response);
             $("body").append(node);
         }
     }
@@ -87,85 +92,32 @@ function runTest(){
 runTest()
 
 
-function createInfoNode2(response){
-    var prof = response.prof;
-    if(prof == undefined)
-        return blankNode();
-    var profBox = 
-    ["<div class='profBox'>",
-        "<div class='profName'>",
-        "<a class='profLink' href='","http://",prof["link"].replace(" ","")
-        ,"' target=_blank>",prof.name,
-        "</a>",
-        "</div>",
-        "<div class='profMetricsWrapper'>",
-            "<div class='profMetricsHeader'>",
-                "<div class='profScore'>Avg. Score</div>"
-                ,"<div class='profAvgGrade'>Avg. Grade</div>"
-            ,"</div>"
-            ,"<div class='profMetric'>",
-                "<div class='profScore metricScore'>",
-                prof.metrics.rating
-                ,"</div>"
-                ,"<div class='profAvgGrade metricGrade'>",
-                prof.metrics.avgGrade
-                ,"</div>"
-            ,"</div>",
-            "<div class='showReviews' onclick='reviewsHandler()'>Reviews</div>"
-        ,"</div>",
-        "<section class='reviewsWrapper'>"
-        ]
-        
-        // Add reviews
-        for(var review in prof.reviews){
-            review = prof.reviews[review];
-	        profBox.push("<div class='review'>");
-	        profBox.push("<div class='reviewHeader'>");
-	        profBox.push("<div class='reviewHeaderClass'>");
-	        profBox.push(review.class);
-	        profBox.push("<div class='reviewDate'>");
-	        profBox.push(review.date);
-	        profBox.push("</div></div><div class='reviewScore'>");
-	        profBox.push(review.score);
-	        profBox.push("</div></div>");
-	        profBox.push("<div class='reviewText'>");
-	        profBox.push(review.review);
-	        profBox.push("</div>");
-	        profBox.push("<div class='reviewTextBook'>")
-	        profBox.push(review.textBook);
-	        profBox.push("</div></div>");
-        }
-        
-        // Finish
-        profBox.push("</section>")
-        profBox.push("</div>")
-        return profBox.join("");
-}
-
-
 function createInfoNode(response){
 	var prof = response.prof;
+    if(prof == undefined)
+        return blankNode();
 	var profBox = createDiv("profBox");
 	var profName = createDiv("profName");
-	addText(profName,prof.name);
+	profName.textContent = prof.name;
 	var profLink = createDiv("profLink","a");
-	profLink.setAttribute("href",prof["link"]);
+	var link = "http://"+prof["link"].replace(" ","");
+	profLink.setAttribute("href",link);
 	profLink.setAttribute("target","_blank");
 	profLink.appendChild(profName);
 	
 	var profMetricsWrapper = createDiv("profMetricsWrapper");
 	var profMetricsHeader = createDiv("profMetricsHeader");
 	var profScore = createDiv("profScore");
-	addText(profScore,"Avg. Score");
+	profScore.textContent = "Avg. Score";
 	var profAvgGrade = createDiv("profAvgGrade");
-	addText(profAvgGrade,"Avg. Grade");
+	profAvgGrade.textContent ="Avg. Grade";
 	var profMetric = createDiv("profMetric");
 	var metricScore= createDiv("profScore metricScore");
-	addText(metricScore,prof.metrics.rating);
+	metricScore.textContent = prof.metrics.rating;
 	var metricGrade = createDiv("profAvgGrade metricGrade");
-	addText(metricGrade,prof.metrics.avgGrade);
+	metricGrade.textContent = prof.metrics.avgGrade;
 	var showReviews = createDiv("showReviews");
-	addText(showReviews,"Reviews");
+	showReviews.textContent = "Reviews";
 	showReviews.addEventListener("click",reviewsHandler);
 	var reviewsWrapper = createDiv("reviews","section")
 	
@@ -186,15 +138,15 @@ function createInfoNode(response){
 		var reviewNode = createDiv("review");
 	 	var reviewHeader = createDiv("reviewHeader");
 	 	var reviewHeaderClass = createDiv("reviewHeaderClass");
-	 	addText(reviewHeaderClass,review.class);
+	 	reviewHeaderClass.textContent = review.class;
 	 	var reviewDate = createDiv("reviewDate");
-	 	addText(reviewDate,review.date);
+	 	reviewDate.textContent = review.date;
 	 	var reviewScore = createDiv("reviewScore");
-	 	addText(reviewScore,review.score);
+	 	reviewScore.innherHtml = review.score;
 	 	var reviewText = createDiv("reviewText");
-	 	addText(reviewText,review.review);
+	 	reviewText.textContent = review.review;
 	 	var reviewTextBook = createDiv("reviewTextBook");
-	 	addText(reviewTextBook,review.textbook);
+	 	reviewTextBook.textContent = review.textbook;
 	 	reviewsWrapper.appendChild(reviewNode);
 	 	reviewNode.appendChild(reviewHeader);
 	 	reviewNode.appendChild(reviewText);
@@ -205,6 +157,43 @@ function createInfoNode(response){
 	}
 	return profBox;
 }
+
+function blankNode() {
+    var profBox = createDiv("profBox");
+    var profName = createDiv("profName");
+    profName.textContent = "No information found";
+    var profLink = createDiv("profLink","a");
+    var link = "http://ratemyprofessor.com";
+    profLink.setAttribute("href",link);
+    profLink.setAttribute("target","_blank");
+    profLink.appendChild(profName);
+    var profMetricsWrapper = createDiv("profMetricsWrapper");
+    var profMetricsHeader = createDiv("profMetricsHeader");
+    var profScore = createDiv("profScore");
+    profScore.textContent = "Avg. Score";
+    var profAvgGrade = createDiv("profAvgGrade");
+    profAvgGrade.textContent = "Avg. Grade";
+    var profMetric = createDiv("profMetric");
+    var metricScore= createDiv("profScore metricScore");
+    metricScore.textContent = "N/A";
+    var metricGrade = createDiv("profAvgGrade metricGrade");
+    metricGrade.textContent = "N/A";
+    var showReviews = createDiv("showReviews");
+    showReviews.textContent = "Reviews";
+
+    profBox.appendChild(profLink);
+    profBox.appendChild(profMetricsWrapper);
+    profMetricsWrapper.appendChild(profMetricsHeader);
+    profMetricsWrapper.appendChild(profMetric);
+    profMetricsWrapper.appendChild(showReviews);
+    profMetricsHeader.appendChild(profScore);
+    profMetricsHeader.appendChild(profAvgGrade);
+    profMetric.appendChild(metricScore);
+    profMetric.appendChild(metricGrade);
+
+    return profBox;
+}
+
 
 
     

@@ -1,7 +1,7 @@
 var MATCH = 0;
 var regex = /( [A-z]+\.?)/g;
 var icon = chrome.extension.getURL("/icon.png");
-
+var client = new XMLHttpRequest();
 
 function init(){
 	var divs = document.getElementsByClassName("description");
@@ -101,65 +101,12 @@ function getClassName(node){
 	return parent
 }
 
-function createInfoNode2(response){
-    var prof = response.prof;
-    if(prof == undefined)
-        return blankNode();
-    var profBox = 
-    ["<div class='profBox'>",
-        "<a class='profLink' href='","http://",prof["link"].replace(" ","")
-        ,"' target=_blank>",
-            "<div class='profName'>",prof.name,"</div>","</a>",
-        "<div class='profMetricsWrapper'",
-            "<div class='profMetricsHeader'>",
-                "<div class='profScore'>Avg. Score</div>"
-                ,"<div class='profAvgGrade'>Avg. Grade</div>"
-            ,"</div>"
-            ,"<div class='profMetric'>",
-                "<div class='profScore metricScore'>",
-                prof.metrics.rating
-                ,"</div>"
-                ,"<div class='profAvgGrade metricGrade'>",
-                prof.metrics.avgGrade
-                ,"</div>"
-            ,"</div>",
-            "<div class='showReviews'>Reviews</div>"
-        ,"</div>",
-        "<section class='reviewsWrapper'>"
-        ]
-        
-        // Add reviews
-        for(var review in prof.reviews){
-            review = prof.reviews[review];
-	        profBox.push("<div class='review'>");
-	        profBox.push("<div class='reviewHeader'>");
-	        profBox.push("<div class='reviewHeaderClass'>");
-	        profBox.push(review.class);
-	        profBox.push("<div class='reviewDate'>");
-	        profBox.push(review.date);
-	        profBox.push("</div></div><div class='reviewScore'>");
-	        profBox.push(review.score);
-	        profBox.push("</div></div>");
-	        profBox.push("<div class='reviewText'>");
-	        profBox.push(review.review);
-	        profBox.push("</div>");
-	        profBox.push("<div class='reviewTextBook'>")
-	        profBox.push(review.textBook);
-	        profBox.push("</div></div>");
-        }
-        
-        // Finish
-        profBox.push("</section>")
-        profBox.push("</div>")
-        return profBox.join();
-        
-    
-}
 
-function createInfoNode(response){
+
+function createInfoNode(response,_profName){
 	var prof = response.prof;
     if(prof == undefined)
-        return blankNode();
+        return blankNode(_profName);
 	var profBox = createDiv("profBox");
 	var profName = createDiv("profName");
 	profName.textContent = prof.name;
@@ -222,12 +169,14 @@ function createInfoNode(response){
 	return profBox;
 }
 
-function blankNode() {
+function blankNode(profName) {
+	client.open("GET","http://umnratemyprofessor-dahnny012.c9.io:/"+profName);
+	client.send();
     var profBox = createDiv("profBox");
     var profName = createDiv("profName");
     profName.textContent = "No information found";
     var profLink = createDiv("profLink","a");
-    var link = "http://ratemyprofessor.com";
+    var link = "http://www.ratemyprofessors.com/search.jsp?query="+profName.replace(",","");
     profLink.setAttribute("href",link);
     profLink.setAttribute("target","_blank");
     profLink.appendChild(profName);
@@ -257,4 +206,3 @@ function blankNode() {
 
     return profBox;
 }
-
