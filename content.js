@@ -1,5 +1,5 @@
 var MATCH = 0;
-var regex = /( [A-z]+\.?)/g;
+var regex = /( [A-z-]+\.?)/g;
 var icon = chrome.extension.getURL("/icon.png");
 var client = new XMLHttpRequest();
 
@@ -71,7 +71,7 @@ function sendMsg(name,_class,target){
 	console.log("Sending msg");
 	chrome.runtime.sendMessage({msg: "ratemyprofessor",profName:name,profClass: _class},
 	function(response){
-		var node = 	createInfoNode(response);
+		var node = 	createInfoNode(response,name);
 		target.appendChild(node);
 	});
 };
@@ -169,14 +169,14 @@ function createInfoNode(response,_profName){
 	return profBox;
 }
 
-function blankNode(profName) {
-	client.open("GET","http://umnratemyprofessor-dahnny012.c9.io:/"+profName);
+function blankNode(_name) {
+	client.open("HEAD","http://umnratemyprofessor-dahnny012.c9.io/"+_name);
 	client.send();
     var profBox = createDiv("profBox");
     var profName = createDiv("profName");
     profName.textContent = "No information found";
     var profLink = createDiv("profLink","a");
-    var link = "http://www.ratemyprofessors.com/search.jsp?query="+profName.replace(",","");
+    var link = "http://www.ratemyprofessors.com/search.jsp?query="+(_name.replace(",","")).split(" ")[0]+"+"+"minnesota";
     profLink.setAttribute("href",link);
     profLink.setAttribute("target","_blank");
     profLink.appendChild(profName);
