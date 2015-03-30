@@ -1,10 +1,11 @@
 var fs = require("fs");
 var regex = /[A-z-]+/;
 var newTable = {};
-
+var inFn = process.argv[2];
+var outFn = inFn.match("[A-z]+")[0]+"Out.json";
 
 // pretend the data is not in the background file.
-var file = fs.readFileSync("data.json");
+var file = fs.readFileSync(inFn);
 
 var oldTable = JSON.parse(file);
 
@@ -21,7 +22,7 @@ for(var name in oldTable){
 }
 
 
-fs.writeFileSync("newData.js","var profs ="+JSON.stringify(newTable));
+fs.writeFileSync(outFn,JSON.stringify(newTable));
 
 
 
