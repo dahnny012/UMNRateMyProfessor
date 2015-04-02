@@ -1,5 +1,7 @@
 var MATCH = 0;
 var regex = /( [A-z-]+\.?)/g;
+var regexTime = /[0-9:]+ [APM\.]+/g;
+var regexDate = /[MTFW]h*/g;
 var icon = chrome.extension.getURL("/icon.png");
 var client = new XMLHttpRequest();
 
@@ -10,6 +12,7 @@ function init(){
 	
 	for(var i =0; i<size; i++){
 		var links = divs[i].getElementsByTagName("a");
+		var times = divs[i].textContent;
 		var linkSize = links.length;
 		for(var j=0; j<linkSize; j++) {
 			if (links[j].href.search(pattern) == MATCH) {
