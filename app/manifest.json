@@ -15,7 +15,7 @@
     "persistent": true
   },
   "content_scripts":[{
-	"js":["jquery.js","content.js"],
+	"js":["content.js"],
 	"css":["mockup.css"],
 	"matches": ["*://onestop2.umn.edu/courseinfo/viewSearchResults.do?campus=UMNTC*"]
   }]

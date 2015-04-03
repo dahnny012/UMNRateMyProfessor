@@ -1,20 +1,19 @@
 var MATCH = 0;
 var regex = /( [A-z-]+\.?)/g;
 var regexTime = /[0-9:]+ [APM\.]+/g;
-var regexDate = /[MTWF]h*[^(A\.M)(P\.M)]/;
+var regexDate = /[MTWF]+[hu]*(,[MTWF]+[hu]*)*[^(A.M)^(P.M)]/;
 var icon = chrome.extension.getURL("/icon.png");
 var client = new XMLHttpRequest();
-
 function init(){
 	var divs = document.getElementsByClassName("description");
 	var size = divs.length;
 	var pattern  = /http:\/\/www\.umn\.edu\/lookup\?/;
-	
+	var dayKeys = ["M","Tu","W","Th","F"];
 	for(var i =0; i<size; i++){
 		var links = divs[i].getElementsByTagName("a");
 		var times = divs[i].textContent;
-		
-		/*Scan for*/
+		parseTime(times,dayKeys);
+
 		
 		var linkSize = links.length;
 		for(var j=0; j<linkSize; j++) {
@@ -30,11 +29,15 @@ function init(){
 }
 init();
 
-
-
-function parseTime(text){
+function parseTime(text,keys){
 	var time = text.match(regexTime);
 	var date = text.match(regexDate);
+	console.log(date);
+	date = date[0].replace(/\n/,"");
+	date = date.split(/,/);
+	if(keys.indexOf(date[0]) == -1)
+		return;
+	//console.log(date);
 	// Check with current schedule
 		// Send Msg to Chrome Extension Background
 	// Recieve and then change css, dont want to redraw dom here.
