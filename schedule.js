@@ -1,5 +1,3 @@
-
-
 var whiteRow = document.getElementsByClassName("white")
 var coloredRow = document.getElementsByClassName("coloredtablerow")
 var schedule = {};
@@ -8,7 +6,7 @@ var schedule = {};
 // get all tds for white row
     for(var i=0; i<whiteRow.length; i++){
         var row = whiteRow[i];
-        var tds = row.getElementsByTagname("td");
+        var tds = row.getElementsByTagName("td");
         var days = tds[3].textContent;
         var time = tds[5].textContent;
         addToSchedule(days,time);
@@ -17,41 +15,81 @@ var schedule = {};
 // get all tds for colored row
     for(i=0; i<coloredRow.length; i++){
         var row = coloredRow[i];
-        var tds = row.getElementsByTagname("td");
+        var tds = row.getElementsByTagName("td");
         var days = tds[3].textContent;
         var time = tds[5].textContent;
         addToSchedule(days,time);
     }
-
-
+    
+    runTests();
+    
 function addToSchedule(days,time){
     days = days.match(/[MTWF]h*/g);
-    time = time.match(/[0-9:]+ [(pm)(am)]/g);
+    time = time.match(/[0-9:]+ [(pm)(am)]+/g);
     time = timeToNumber(time);
-    
+   
     days.forEach(function(day){
          if(schedule[day] === undefined)
             schedule[day] = [];
-        schedule.push(time);
+        schedule[day].push(time);
     });
 }
 
 function timeToNumber(time){
-    // 10:00 pm ---  11:00 pm
-    var start = time[0].match(/[0-9]+/);
+    var start = time[0].match(/[0-9]+/g);
     var startOffset = time[0].search(/pm/);
     start = parseInt(start.join(""));
-    if(startOffset && start > 1259)
+    if(startOffset != -1 && (start % 1200) > 59)
         start  += 1200;
-    var end = time[1].match(/[0-9]+/);
+    var end = time[1].match(/[0-9]+/g);
     var endOffset = time[1].search(/pm/);
-    if(endOffset && end > 1259)
-        end += 1200;
     end = parseInt(end.join(""));
+    if(endOffset != -1 && (end % 1200) > 59)
+        end += 1200;
     return {"start":start,
     "end":end,
     between:function(time){
-        return (time.start >= this.start && this.end <= time.start) ||
-                (time.end >= this.start  && this.end <= time.end);
+        return (this.start >= time.start && this.start <= time.end) ||
+                (this.end >= time.start  && this.end <= time.end) ||
+                (this.start <= time.start && this.end >= time.end);   
     }};
 }
+
+
+function runTests(){
+    // basic cases
+    var base = timeToNumber(["1:00 pm","2:00 pm"]);
+    var fails = [];
+    console.log(base);
+    // Should fail
+    fails.push(timeToNumber(["1:01 pm","2:01 pm"]));
+    fails.push(timeToNumber(["12:59 pm","2:02 pm"]));
+    fails.push(timeToNumber(["11:59 am","1:59 pm"]));
+    fails.push(timeToNumber(["11:59 am","5:00 pm"]));
+    fails.push(timeToNumber(["1:00 pm","2:00 pm"]));
+    fails.push(timeToNumber(["1:00 am","2:00 pm"]));
+    
+    fails.forEach(function(e){
+        if(!base.between(e)){
+			console.log(e)
+            throw "Error";
+        }
+    });
+    
+    var passes = [];
+    passes.push(timeToNumber(["11:59 am","12:59 pm"]));
+    passes.push(timeToNumber(["2:01 am","12:59 pm"]));
+    passes.push(timeToNumber(["2:01 pm","11:59 pm"]));
+    passes.push(timeToNumber(["1:00 am","12:59 pm"]));
+    
+    
+    passes.forEach(function(e){
+        if(base.between(e)){
+			console.log(e)
+            throw "Error";
+        }
+    });
+}
+
+
+

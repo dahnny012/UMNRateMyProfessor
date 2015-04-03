@@ -1,7 +1,7 @@
 var MATCH = 0;
 var regex = /( [A-z-]+\.?)/g;
 var regexTime = /[0-9:]+ [APM\.]+/g;
-var regexDate = /[MTFW]h*/g;
+var regexDate = /[MTWF]h*[^(A\.M)(P\.M)]/;
 var icon = chrome.extension.getURL("/icon.png");
 var client = new XMLHttpRequest();
 
@@ -13,6 +13,9 @@ function init(){
 	for(var i =0; i<size; i++){
 		var links = divs[i].getElementsByTagName("a");
 		var times = divs[i].textContent;
+		
+		/*Scan for*/
+		
 		var linkSize = links.length;
 		for(var j=0; j<linkSize; j++) {
 			if (links[j].href.search(pattern) == MATCH) {
@@ -26,6 +29,16 @@ function init(){
 	}
 }
 init();
+
+
+
+function parseTime(text){
+	var time = text.match(regexTime);
+	var date = text.match(regexDate);
+	// Check with current schedule
+		// Send Msg to Chrome Extension Background
+	// Recieve and then change css, dont want to redraw dom here.
+}
 
 function createNode(profName,profClass){
 	var wrapper = document.createElement("div");
