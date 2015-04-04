@@ -1,33 +1,31 @@
-var whiteRow = document.getElementsByClassName("white")
-var coloredRow = document.getElementsByClassName("coloredtablerow")
-var schedule = {};
 
 
-// get all tds for white row
-    for(var i=0; i<whiteRow.length; i++){
-        var row = whiteRow[i];
+function init(){
+	var schedule = {};
+	var whiteRow = document.getElementsByClassName("white");
+	var coloredRow = document.getElementsByClassName("coloredtablerow");
+	scrapeRow(whiteRow,schedule);
+	scrapeRow(coloredRow,schedule);
+	chrome.runtime.sendMessage({msg: "syncSchedule",schedule:schedule});
+}
+    
+function scrapeRow(htmlRow,schedule){
+	 for(i=0; i<htmlRow.length; i++){
+        var row = htmlRow[i];
         var tds = row.getElementsByTagName("td");
         var days = tds[3].textContent;
         var time = tds[5].textContent;
-        addToSchedule(days,time);
-        
+        var class = tds[1].textContent.match(/[A-z0-9]+/g).join(" ");
+        addToSchedule(days,time,class,schedule);
     }
-// get all tds for colored row
-    for(i=0; i<coloredRow.length; i++){
-        var row = coloredRow[i];
-        var tds = row.getElementsByTagName("td");
-        var days = tds[3].textContent;
-        var time = tds[5].textContent;
-        addToSchedule(days,time);
-    }
+}    
     
-    runTests();
     
-function addToSchedule(days,time){
+function addToSchedule(days,time,class,schedule){
     days = days.match(/[MTWF]h*/g);
     time = time.match(/[0-9:]+ [(pm)(am)]+/g);
     time = timeToNumber(time);
-   
+	time['class'] = class;
     days.forEach(function(day){
          if(schedule[day] === undefined)
             schedule[day] = [];
@@ -46,7 +44,8 @@ function timeToNumber(time){
     end = parseInt(end.join(""));
     if(endOffset != -1 && (end % 1200) > 59)
         end += 1200;
-    return {"start":start,
+    return {	
+	"start":start,
     "end":end,
     between:function(time){
         return (this.start >= time.start && this.start <= time.end) ||

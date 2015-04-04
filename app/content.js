@@ -12,9 +12,8 @@ function init(){
 	for(var i =0; i<size; i++){
 		var links = divs[i].getElementsByTagName("a");
 		var times = divs[i].textContent;
-		parseTime(times,dayKeys);
+		parseTime(times,dayKeys,divs[i]);
 
-		
 		var linkSize = links.length;
 		for(var j=0; j<linkSize; j++) {
 			if (links[j].href.search(pattern) == MATCH) {
@@ -29,7 +28,7 @@ function init(){
 }
 init();
 
-function parseTime(text,keys){
+function parseTime(text,keys,div){
 	var time = text.match(regexTime);
 	var date = text.match(regexDate);
 	console.log(date);
@@ -37,10 +36,12 @@ function parseTime(text,keys){
 	date = date.split(/,/);
 	if(keys.indexOf(date[0]) == -1)
 		return;
-	//console.log(date);
-	// Check with current schedule
-		// Send Msg to Chrome Extension Background
-	// Recieve and then change css, dont want to redraw dom here.
+	console.log(date);
+	chrome.runtime.sendMessage({msg: "schedule",date:date,time:time},
+	function(response){
+		div.color = "blue";
+		// make color red/blue?
+	});
 }
 
 function createNode(profName,profClass){
