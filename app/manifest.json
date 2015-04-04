@@ -11,12 +11,14 @@
     "activeTab"
   ],
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["background.js","scheduleBG.js"],
     "persistent": true
   },
   "content_scripts":[{
 	"js":["content.js"],
 	"css":["mockup.css"],
-	"matches": ["*://onestop2.umn.edu/courseinfo/viewSearchResults.do?campus=UMNTC*"]
+	"matches": ["*://onestop2.umn.edu/courseinfo/viewSearchResults.do?campus=UMNTC*",
+	"*://webapps-prd.oit.umn.edu/registration/initializeCurrentEnrollment*"
+	]
   }]
 }
