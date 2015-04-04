@@ -37,16 +37,15 @@ else{
 function parseTime(text,keys,div){
 	var time = text.match(regexTime);
 	var date = text.match(regexDate);
-	console.log(date);
 	date = date[0].replace(/\n/,"");
 	date = date.split(/,/);
 	if(keys.indexOf(date[0]) == -1)
 		return;
-	console.log(date);
 	chrome.runtime.sendMessage({msg: "schedule",date:date,time:time},
 	function(response){
-		div.color = "blue";
-		// make color red/blue?
+		if(response.conflict){
+			div.style.color = "blue";
+		}
 	});
 }
 

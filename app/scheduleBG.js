@@ -19,38 +19,50 @@ chrome.runtime.onMessage.addListener(
 
 
 function getConflict(request){
-  for(var day in request.day){
+	var dateSize = request.date.length;
+  for(var i=0; i<dateSize; i++){
+	  var day = request.date[i];
+	  if(day === "Tu"){
+		day = "T";
+	  }
 	if(schedule[day] !== undefined){
 		var time = timeToNumber(request.time);
-		for(var currentTime in schedule[day]){
-			if(currentTime.between(time)){
-				return false;
+		var numTimes = schedule[day].length;
+		console.log(day);
+		for(var j=0; j<numTimes; j++){
+			currentTime = schedule[day][j];
+			console.log(currentTime);
+			console.log(time);
+			if(checkBetween(currentTime,time)){
+				return true;
 			}
 		}
 	}
-	
   }
-  return true;
+  return false;
 }
+
 function timeToNumber(time){
     var start = time[0].match(/[0-9]+/g);
-    var startOffset = time[0].search(/pm/);
+    var startOffset = time[0].search(/p.m./i);
     start = parseInt(start.join(""));
     if(startOffset != -1 && (start % 1200) > 59)
         start  += 1200;
     var end = time[1].match(/[0-9]+/g);
-    var endOffset = time[1].search(/pm/);
+    var endOffset = time[1].search(/p.m./i);
     end = parseInt(end.join(""));
     if(endOffset != -1 && (end % 1200) > 59)
         end += 1200;
     return {	
 	"start":start,
-    "end":end,
-    between:function(time){
-        return (this.start >= time.start && this.start <= time.end) ||
-                (this.end >= time.start  && this.end <= time.end) ||
-                (this.start <= time.start && this.end >= time.end);   
-    }};
+    "end":end
+	}
+}
+
+function checkBetween(time1,time2){
+	return (time1.start >= time2.start && time1.start <= time2.end) ||
+           (time1.end >= time2.start  && time1.end <= time2.end) ||
+           (time1.start <= time2.start && time1.end >= time2.end);   
 }
 
 

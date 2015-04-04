@@ -48,7 +48,7 @@ function timeToNumber(time){
     return {	
 	"start":start,
     "end":end,
-    between:function(time){
+    "between":function(time){
         return (this.start >= time.start && this.start <= time.end) ||
                 (this.end >= time.start  && this.end <= time.end) ||
                 (this.start <= time.start && this.end >= time.end);   
