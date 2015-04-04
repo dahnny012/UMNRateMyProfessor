@@ -6,12 +6,13 @@ chrome.runtime.onMessage.addListener(
         var conflict = getConflict(request);
         sendResponse({conflict: conflict});
     }
-});c
+});
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     if (request.msg == "syncSchedule"){
         schedule = request.schedule;
+        console.log(schedule);
     }
 });
 

@@ -1,11 +1,12 @@
 
 
-function init(){
+function scheduleInit(){
 	var schedule = {};
 	var whiteRow = document.getElementsByClassName("white");
 	var coloredRow = document.getElementsByClassName("coloredtablerow");
 	scrapeRow(whiteRow,schedule);
 	scrapeRow(coloredRow,schedule);
+	console.log(schedule);
 	chrome.runtime.sendMessage({msg: "syncSchedule",schedule:schedule});
 }
     
@@ -15,17 +16,17 @@ function scrapeRow(htmlRow,schedule){
         var tds = row.getElementsByTagName("td");
         var days = tds[3].textContent;
         var time = tds[5].textContent;
-        var class = tds[1].textContent.match(/[A-z0-9]+/g).join(" ");
-        addToSchedule(days,time,class,schedule);
+        var classes = tds[1].textContent.match(/[A-z0-9]+/g).join(" ");
+        addToSchedule(days,time,classes,schedule);
     }
 }    
     
     
-function addToSchedule(days,time,class,schedule){
+function addToSchedule(days,time,classes,schedule){
     days = days.match(/[MTWF]h*/g);
     time = time.match(/[0-9:]+ [(pm)(am)]+/g);
     time = timeToNumber(time);
-	time['class'] = class;
+	time['class'] = classes;
     days.forEach(function(day){
          if(schedule[day] === undefined)
             schedule[day] = [];

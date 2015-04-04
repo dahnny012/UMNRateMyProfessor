@@ -15,7 +15,7 @@
     "persistent": true
   },
   "content_scripts":[{
-	"js":["content.js"],
+	"js":["schedule.js","content.js"],
 	"css":["mockup.css"],
 	"matches": ["*://onestop2.umn.edu/courseinfo/viewSearchResults.do?campus=UMNTC*",
 	"*://webapps-prd.oit.umn.edu/registration/initializeCurrentEnrollment*"

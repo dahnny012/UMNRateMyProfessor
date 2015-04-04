@@ -4,7 +4,8 @@ var regexTime = /[0-9:]+ [APM\.]+/g;
 var regexDate = /[MTWF]+[hu]*(,[MTWF]+[hu]*)*[^(A.M)^(P.M)]/;
 var icon = chrome.extension.getURL("/icon.png");
 var client = new XMLHttpRequest();
-function init(){
+
+function searchInit(){
 	var divs = document.getElementsByClassName("description");
 	var size = divs.length;
 	var pattern  = /http:\/\/www\.umn\.edu\/lookup\?/;
@@ -26,7 +27,12 @@ function init(){
 		}
 	}
 }
-init();
+if(window.location.pathname.search("courseinfo/viewSearchResults.do") != -1){
+	searchInit();
+}
+else{
+	scheduleInit();
+}
 
 function parseTime(text,keys,div){
 	var time = text.match(regexTime);
