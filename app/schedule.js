@@ -34,26 +34,7 @@ function addToSchedule(days,time,classes,schedule){
     });
 }
 
-function timeToNumber(time){
-    var start = time[0].match(/[0-9]+/g);
-    var startOffset = time[0].search(/pm/);
-    start = parseInt(start.join(""));
-    if(startOffset != -1 && (start % 1200) > 59)
-        start  += 1200;
-    var end = time[1].match(/[0-9]+/g);
-    var endOffset = time[1].search(/pm/);
-    end = parseInt(end.join(""));
-    if(endOffset != -1 && (end % 1200) > 59)
-        end += 1200;
-    return {	
-	"start":start,
-    "end":end,
-    "between":function(time){
-        return (this.start >= time.start && this.start <= time.end) ||
-                (this.end >= time.start  && this.end <= time.end) ||
-                (this.start <= time.start && this.end >= time.end);   
-    }};
-}
+
 
 
 function runTests(){
@@ -71,7 +52,7 @@ function runTests(){
     
     fails.forEach(function(e){
         if(!base.between(e)){
-			console.log(e)
+			console.log(e);
             throw "Error";
         }
     });
@@ -85,7 +66,7 @@ function runTests(){
     
     passes.forEach(function(e){
         if(base.between(e)){
-			console.log(e)
+			console.log(e);
             throw "Error";
         }
     });

@@ -4,6 +4,7 @@ var regexTime = /[0-9:]+ [APM\.]+/g;
 var regexDate = /[MTWF]+[hu]*(,[MTWF]+[hu]*)*[^(A.M)^(P.M)]/;
 var icon = chrome.extension.getURL("/icon.png");
 var client = new XMLHttpRequest();
+var schedule = {"M":[{"start":125,"end":215,"class":"CSCL 3461 Monsters Robots Cyborgs"},{"start":230,"end":345,"class":"CSCI 4511W Intro Artificial Intelligence"},{"start":400,"end":515,"class":"CSCI 5271 Intro to Computer Security"},{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}],"W":[{"start":125,"end":215,"class":"CSCL 3461 Monsters Robots Cyborgs"},{"start":230,"end":345,"class":"CSCI 4511W Intro Artificial Intelligence"},{"start":400,"end":515,"class":"CSCI 5271 Intro to Computer Security"},{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}],"T":[{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}],"Th":[{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}],"F":[{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}]};
 
 function searchInit(){
 	var divs = document.getElementsByClassName("description");
@@ -28,7 +29,11 @@ function searchInit(){
 	}
 }
 if(window.location.pathname.search("courseinfo/viewSearchResults.do") != -1){
-	searchInit();
+  chrome.runtime.sendMessage({msg: "getSchedule"},
+	function(response){
+		schedule = response.schedule;
+		searchInit();
+	});
 }
 else{
 	scheduleInit();
@@ -41,17 +46,19 @@ function parseTime(text,keys,div){
 	date = date.split(/,/);
 	if(keys.indexOf(date[0]) == -1)
 		return;
-	chrome.runtime.sendMessage({msg: "schedule",date:date,time:time},
-	function(response){
-		if(response.conflict){
-			div.style.color = "blue";
-		}
-	});
+	var conflict = getConflict(date,time);
+	if(!conflict)
+	  return;
+	var image = new Image();
+	image.src = "http://icons.iconarchive.com/icons/wineass/ios7-redesign/512/Sample-icon.png";
+	image.style.width = "30px";
+	image.style.height = "30px";
+	div.insertBefore(image,div.firstChild);
 }
 
 function createNode(profName,profClass){
 	var wrapper = document.createElement("div");
-	var node = document.createElement("img");
+	var node = new Image();
 	wrapper.appendChild(node);
 	wrapper.style.display = "inline";
 	wrapper.className = "profWrapper";
@@ -61,15 +68,14 @@ function createNode(profName,profClass){
 	node.src = icon;
 
 	node.addEventListener("click",function(e){
-		console.log(e.target.className);
 		if(e.target.className == "prof"){
-			if(e.target.clicked == undefined){
+			if(e.target.clicked === undefined){
 				e.target.clicked = true;
 				var target = e.target.parentNode;
 				sendMsg(profName,profClass,target);
 			}else{
 				e.target.clicked = undefined;
-				removeNode(e)
+				removeNode(e);
 			}
 		}
 	},true);
@@ -93,17 +99,16 @@ function createDiv(_class,tag){
 }
 
 function sendMsg(name,_class,target){
-	console.log("Sending msg");
 	chrome.runtime.sendMessage({msg: "ratemyprofessor",profName:name,profClass: _class},
 	function(response){
 		var node = 	createInfoNode(response,name);
 		target.appendChild(node);
 	});
-};
+}
 
 function reviewsHandler(e){
 	var parent = e.target.parentElement.parentElement;
-    if(e.target.clicked == undefined){
+    if(e.target.clicked === undefined){
     	e.target.clicked = true;
         parent.setAttribute("style","height:auto"); 
     }else{
@@ -123,14 +128,14 @@ function getClassName(node){
 	}else{
 		return "";
 	}
-	return parent
+	return parent;
 }
 
 
 
 function createInfoNode(response,_profName){
 	var prof = response.prof;
-    if(prof == undefined)
+    if(prof === undefined)
         return blankNode(_profName);
 	var profBox = createDiv("profBox");
 	var profName = createDiv("profName");
@@ -155,7 +160,7 @@ function createInfoNode(response,_profName){
 	var showReviews = createDiv("showReviews");
 	showReviews.textContent = "Reviews";
 	showReviews.addEventListener("click",reviewsHandler);
-	var reviewsWrapper = createDiv("reviews","section")
+	var reviewsWrapper = createDiv("reviews","section");
 	
 	profBox.appendChild(profLink);
 	profBox.appendChild(profMetricsWrapper);
@@ -231,3 +236,50 @@ function blankNode(_name) {
 
     return profBox;
 }
+
+
+function getConflict(date,times){
+	var dateSize = date.length;
+  for(var i=0; i<dateSize; i++){
+	  var day = date[i];
+	  if(day === "Tu"){
+		day = "T";
+	  }
+	if(schedule[day] !== undefined){
+		time = timeToNumber(times);
+		var numTimes = schedule[day].length;
+		for(var j=0; j<numTimes; j++){
+			currentTime = schedule[day][j];
+			if(checkBetween(currentTime,time)){
+				return true;
+			}
+		}
+	}
+  }
+  return false;
+}
+
+function timeToNumber(time){
+    var start = time[0].match(/[0-9]+/g);
+    var startOffset = time[0].search(/(p.m.)(pm)/i);
+    start = parseInt(start.join(""));
+    if(startOffset != -1 && (start % 1200) > 59)
+        start  += 1200;
+    var end = time[1].match(/[0-9]+/g);
+    var endOffset = time[1].search(/(p.m.)(pm)/i);
+    end = parseInt(end.join(""));
+    if(endOffset != -1 && (end % 1200) > 59)
+        end += 1200;
+    return {	
+	"start":start,
+    "end":end
+	};
+}
+
+function checkBetween(time1,time2){
+	return (time1.start >= time2.start && time1.start <= time2.end) ||
+           (time1.end >= time2.start  && time1.end <= time2.end) ||
+           (time1.start <= time2.start && time1.end >= time2.end);
+}
+
+
