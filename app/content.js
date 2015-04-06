@@ -3,8 +3,9 @@ var regex = /( [A-z-]+\.?)/g;
 var regexTime = /[0-9:]+ [APM\.]+/g;
 var regexDate = /[MTWF]+[hu]*(,[MTWF]+[hu]*)*[^(A.M)^(P.M)]/;
 var icon = chrome.extension.getURL("/icon.png");
+var conflictIcon = chrome.extension.getURL("/conflictIcon.png");
 var client = new XMLHttpRequest();
-var schedule = {"M":[{"start":125,"end":215,"class":"CSCL 3461 Monsters Robots Cyborgs"},{"start":230,"end":345,"class":"CSCI 4511W Intro Artificial Intelligence"},{"start":400,"end":515,"class":"CSCI 5271 Intro to Computer Security"},{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}],"W":[{"start":125,"end":215,"class":"CSCL 3461 Monsters Robots Cyborgs"},{"start":230,"end":345,"class":"CSCI 4511W Intro Artificial Intelligence"},{"start":400,"end":515,"class":"CSCI 5271 Intro to Computer Security"},{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}],"T":[{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}],"Th":[{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}],"F":[{"start":1010,"end":1100,"class":"JPN 3021 Intermed Japanese I"}]};
+
 
 function searchInit(){
 	var divs = document.getElementsByClassName("description");
