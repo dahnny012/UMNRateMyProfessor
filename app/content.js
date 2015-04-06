@@ -3,7 +3,7 @@ var regex = /( [A-z-]+\.?)/g;
 var regexTime = /[0-9:]+ [APM\.]+/g;
 var regexDate = /[MTWF]+[hu]*(,[MTWF]+[hu]*)*[^(A.M)^(P.M)]/;
 var icon = chrome.extension.getURL("/icon.png");
-var conflictIcon = chrome.extension.getURL("/conflictIcon.png");
+var conflictIcon = chrome.extension.getURL("/conflict.png");
 var client = new XMLHttpRequest();
 
 
@@ -51,9 +51,10 @@ function parseTime(text,keys,div){
 	if(!conflict)
 	  return;
 	var image = new Image();
-	image.src = "http://icons.iconarchive.com/icons/wineass/ios7-redesign/512/Sample-icon.png";
-	image.style.width = "30px";
-	image.style.height = "30px";
+	image.src = conflictIcon;
+	image.style.width = "24px";
+	image.style.height = "24px";
+	image.title = "Conflict with Time";
 	div.insertBefore(image,div.firstChild);
 }
 
