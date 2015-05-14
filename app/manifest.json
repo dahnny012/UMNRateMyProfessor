@@ -2,24 +2,22 @@
 	"manifest_version": 2,
   "web_accessible_resources": ["icon.png","conflict.png"],
   "name": "Rate my UMN professor",
-  "version": "1.1",
+  "version": "2.0",
   "description": "Brings up UMN Professor Ratings and informs of time conflicts",
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup":"popup.html"
   },
   "permissions": [
-    "activeTab"
+    "activeTab","contextMenus"
   ],
   "background": {
-    "scripts": ["background.js","scheduleBG.js"],
+    "scripts": ["context.js"],
     "persistent": true
   },
   "content_scripts":[{
-	"js":["schedule.js","content.js"],
+	"js":["jquery.js","parse.js"],
 	"css":["mockup.css"],
-	"matches": ["*://onestop2.umn.edu/courseinfo/viewSearchResults.do?campus=UMNTC*",
-	"*://webapps-prd.oit.umn.edu/registration/initializeCurrentEnrollment*"
-	]
+	"matches": ["*://www.myu.umn.edu/*"]
   }]
 }
