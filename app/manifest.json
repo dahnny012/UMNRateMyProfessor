@@ -1,6 +1,6 @@
 {
 	"manifest_version": 2,
-  "web_accessible_resources": ["icon.png","conflict.png"],
+  "web_accessible_resources": ["assets/icon.png","assets/conflict.png"],
   "name": "Rate my UMN professor",
   "version": "2.0",
   "description": "Brings up UMN Professor Ratings and informs of time conflicts",
@@ -12,12 +12,12 @@
     "activeTab","contextMenus"
   ],
   "background": {
-    "scripts": ["context.js"],
+    "scripts": ["scripts/context.js"],
     "persistent": true
   },
   "content_scripts":[{
-	"js":["jquery.js","parse.js"],
-	"css":["mockup.css"],
+	"js":["scripts/jquery.js","scripts/parse.js"],
+	"css":["templates/mockup.css"],
 	"matches": ["*://www.myu.umn.edu/*"]
   }]
 }
