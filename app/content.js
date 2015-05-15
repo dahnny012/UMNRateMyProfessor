@@ -1,9 +1,17 @@
-var parse = new Parse();
+var parse;
 var factory = new ProfNodeFactory();
 
 
 function addNodes(node){
-	
+	var button = factory.buttonNode(
+	    {handler:testfun}
+	);
+	node.appendChild(button);
+}
+
+
+function testfun(e){
+    console.log("CLICKED!");
 }
 
 function openRating(e){
@@ -22,7 +30,9 @@ function sendMsg(name,_class,target){
 
 chrome.runtime.onMessage.addListener(
 	function(request,sender,sendResponse){
+	    parse = new Parse();
 		var profs = parse.findProfessors();
 		profs.forEach(addNodes);
 	}
 );
+
