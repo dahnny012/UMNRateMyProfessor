@@ -1,6 +1,9 @@
+var stylesheet = chrome.extension.getURL("/templates/mockup.css");
+
 function Parse(){
 	this.iframe = document.getElementsByTagName("iframe")[0].
 		contentWindow.document;
+	this.injectCSS();
 	if(this.iframe == null){
 		console.log("Cant find iframe");
 	}
@@ -45,6 +48,15 @@ Parse.prototype.professorFilter=function(node){
 	}
 	return profNode;
 };
+
+Parse.prototype.injectCSS = function(){
+	var link = "https://www-users.cselabs.umn.edu/~nguy1952/ratemyprofessor/style.css";
+	var cssLink = document.createElement("link") 
+	cssLink.href = stylesheet; 
+	cssLink .rel = "stylesheet"; 
+	cssLink .type = "text/css"; 
+	this.iframe.body.appendChild(cssLink);
+}
 
 
 

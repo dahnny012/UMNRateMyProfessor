@@ -2,28 +2,26 @@ var parse;
 var factory = new ProfNodeFactory();
 
 
-function addNodes(node){
+function addNodes(node){	
 	var button = factory.buttonNode(
-	    {handler:testfun}
+	    {handler:openRating}
 	);
 	node.appendChild(button);
 }
 
 
-function testfun(e){
-    console.log("CLICKED!");
-}
-
 function openRating(e){
-	if(e.target.className === "prof"){
-			var node = createInfoNode(prof);
-	}
+	var node = e.target;
+	var parent = e.target.parentElement;
+	var prof = parent.innerText;
+	console.log(prof);
+	parent.appendChild(factory.infoNode());
 }
 
 function sendMsg(name,_class,target){
 	chrome.runtime.sendMessage({msg: "ratemyprofessor",profName:name,profClass: _class},
 	function(response){
-		var node = 	createInfoNode(response,name);
+		var node = 	factory.infoNode(response,name);
 		target.appendChild(node);
 	});
 }
