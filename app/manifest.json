@@ -12,7 +12,7 @@
     "activeTab","contextMenus"
   ],
   "background": {
-    "scripts": ["scripts/context.js"],
+    "scripts": ["assets/professors.js","scripts/context.js","background.js"],
     "persistent": true
   },
   "content_scripts":[{

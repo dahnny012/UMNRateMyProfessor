@@ -14,17 +14,30 @@ function openRating(e){
 	var node = e.target;
 	var parent = e.target.parentElement;
 	var prof = parent.innerText;
-	console.log(prof);
-	parent.appendChild(factory.infoNode());
+	
+	if(node.opened != undefined){
+		removeLastChild(node);
+		node.opened = undefined;
+	}else{
+		sendMsg(prof,parent);
+		node.opened = true;
+	}
 }
 
-function sendMsg(name,_class,target){
-	chrome.runtime.sendMessage({msg: "ratemyprofessor",profName:name,profClass: _class},
+function sendMsg(name,target){
+	chrome.runtime.sendMessage({msg: "ratemyprofessor",profName:name,profClass:"CSCI1113"},
 	function(response){
-		var node = 	factory.infoNode(response,name);
-		target.appendChild(node);
+		target.appendChild(factory.infoNode(response.prof));
 	});
+};
+
+
+function removeLastChild(target){
+	var parent = target.parentElement;
+	if(parent.childNodes.length > 1)
+		parent.removeChild(parent.childNodes[2]); 
 }
+
 
 chrome.runtime.onMessage.addListener(
 	function(request,sender,sendResponse){
@@ -33,4 +46,5 @@ chrome.runtime.onMessage.addListener(
 		profs.forEach(addNodes);
 	}
 );
+
 
