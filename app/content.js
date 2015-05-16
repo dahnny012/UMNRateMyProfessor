@@ -13,7 +13,7 @@ function addNodes(node){
 function openRating(e){
 	var node = e.target;
 	var parent = e.target.parentElement;
-	var prof = parent.innerText;
+	var prof = profWrapper(parent.innerText);
 	
 	if(node.opened != undefined){
 		removeLastChild(node);
@@ -46,5 +46,13 @@ chrome.runtime.onMessage.addListener(
 		profs.forEach(addNodes);
 	}
 );
+
+
+function profWrapper(prof){
+	var names = prof.split(" ");
+	var firstName = names[0];
+	var lastName = names[1];
+	return lastName+", "+firstName;
+}
 
 
