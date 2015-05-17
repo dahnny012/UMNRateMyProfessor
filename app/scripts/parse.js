@@ -10,6 +10,15 @@ function Parse(){
 }
 
 
+Parse.prototype.refresh = function(){
+	this.iframe = document.getElementsByTagName("iframe")[0].
+		contentWindow.document;
+	this.injectCSS();
+	if(this.iframe == null){
+		console.log("Cant find iframe");
+	}
+}
+
 Parse.prototype.classTable = function(){
 	// Look at Iframe
 	// By some magic metric conclude were at classes
@@ -50,6 +59,8 @@ Parse.prototype.professorFilter=function(node){
 };
 
 Parse.prototype.injectCSS = function(){
+	if(this.iframe.body === undefined)
+		return;
 	var link = "https://www-users.cselabs.umn.edu/~nguy1952/ratemyprofessor/style.css";
 	var cssLink = document.createElement("link") 
 	cssLink.href = stylesheet; 

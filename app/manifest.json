@@ -4,9 +4,12 @@
   "name": "Rate my UMN professor",
   "version": "2.0",
   "description": "Brings up UMN Professor Ratings and informs of time conflicts",
+  "icons" : {
+    "16" : "assets/icon.png"
+  },
   "browser_action": {
     "default_icon": "assets/icon.png",
-    "default_popup":"assets/popup.html"
+    "default_popup":"templates/popup.html"
   },
   "permissions": [
     "activeTab","contextMenus"

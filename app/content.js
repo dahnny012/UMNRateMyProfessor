@@ -41,9 +41,12 @@ function removeLastChild(target){
 
 chrome.runtime.onMessage.addListener(
 	function(request,sender,sendResponse){
-	    parse = new Parse();
-		var profs = parse.findProfessors();
-		profs.forEach(addNodes);
+		if(request.cmd == "start"){
+			console.log("Populating with prof nodes");
+	    	parse = new Parse();
+			var profs = parse.findProfessors();
+			profs.forEach(addNodes);
+		}
 	}
 );
 
