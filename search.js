@@ -70,7 +70,7 @@ function main() {
                             console.log(err());
                             return;
                         }
-                        if(offset < 1200)
+                        if(offset < 3000)
                             startSearch();
                     })
                 },
