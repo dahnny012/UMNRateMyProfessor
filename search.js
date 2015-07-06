@@ -1,18 +1,15 @@
-var needle = require('needle');
-var cheerio = require('cheerio');
-var fs = require("fs");
-var finished = 1;
-var glob_offset = 0;
-var DONE = 0;
-var timer;
-var filename = 0;
-var async = require("async");
-var counter = 0;
+
 function main() {
+    var cheerio = require('cheerio');
+    var fs = require("fs");
+    var async = require("async");
+    var counter = 0;
     var http = require('http');
     var table = {}
+    var offset = 0;
+    var max = -1;
 
-
+    // Applies a function to a page
     function getPage(fn, options, args) {
         var callback = function(response) {
             var body = '';
@@ -36,6 +33,12 @@ function main() {
         
             getPage(function(body) {
                     $ = cheerio.load(body);
+                    // Init the max
+                    if(max == -1){
+                        var regex = /-[0-9]+/;
+                        var resultString = $(".result-count");
+                        max = Math.abs(parseInt(regex.exec(resultString)));
+                    }
                     var professorsOnPage = $("li[class='listing PROFESSOR']");
                     async.each(professorsOnPage,
                     function(element,cb) {
@@ -62,7 +65,6 @@ function main() {
                             var prof = createProf(profName, classes, metrics, reviews);
                             prof["link"] = "www.ratemyprofessors.com" + profPage;
                             addProf(prof, table)
-                            console.log(counter++);
                             cb();
                         }, profOptions, offset);
                     },function(err){
@@ -70,8 +72,11 @@ function main() {
                             console.log(err());
                             return;
                         }
-                        if(offset < 3000)
+                        if(offset < max) {
                             startSearch();
+                        }else{
+                            console.log("Finished");
+                        }
                     })
                 },
                 options);
@@ -122,7 +127,6 @@ function main() {
         while (count > 0 && reviews.length != i) {
             var query = $(reviews[i])
             var _class = query.find(".name").find(".response").text().toUpperCase()
-                //console.log("class: " + _class);
                 // Check if already been reviewed
             if (reviewsTable[_class] == undefined && _class != '') {
                 var review = {};
@@ -142,9 +146,6 @@ function main() {
                 review["score"] = avg;
                 review["review"] = reviewText;
                 reviewsTable[_class] = review;
-            }
-            else {
-                //console.log("reject");
             }
             i++;
         }
@@ -170,19 +171,15 @@ function main() {
         }
     }
 
-    function formatName(name) {
-        //Server //replace(/, /,",");
-        //Client //return name.replace(/PHD\./,"").replace(/, /,",");
-    }
-    var offset = 0;
-    startSearch();
-    
     function startSearch(){
         setTimeout(function(){
             search(offset);
             offset += 20;
         },0);
     }
+
+
+    startSearch();
 }
 
 main()
