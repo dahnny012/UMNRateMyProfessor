@@ -5,7 +5,7 @@ function main() {
     var async = require("async");
     var counter = 0;
     var http = require('http');
-    var table = {}
+    var table = {};
     var offset = 0;
     var max = -1;
 
@@ -35,9 +35,13 @@ function main() {
                     $ = cheerio.load(body);
                     // Init the max
                     if(max == -1){
-                        var regex = /-[0-9]+/;
-                        var resultString = $(".result-count");
-                        max = Math.abs(parseInt(regex.exec(resultString)));
+                        var regex = /[0-9-]+/g;
+                        var resultString = $(".result-count").last().text();
+                        var filtered = resultString.match(regex);
+                        max = Math.abs(parseInt(filtered[1])) - 20;
+                        if(max <= 0){
+                            return;
+                        }
                     }
                     var professorsOnPage = $("li[class='listing PROFESSOR']");
                     async.each(professorsOnPage,
