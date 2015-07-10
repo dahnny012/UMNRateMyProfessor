@@ -1,14 +1,16 @@
-
 function main() {
+    var program = require("commander");
     var cheerio = require('cheerio');
+    var pretty =  require("prettyjson")
     var fs = require("fs");
     var async = require("async");
     var counter = 0;
     var http = require('http');
-    var table = {}
+    var table = {};
     var offset = 0;
     var max = -1;
-
+    var query = "";
+    
     // Applies a function to a page
     function getPage(fn, options, args) {
         var callback = function(response) {
@@ -27,7 +29,7 @@ function main() {
     function search(offset) {
             var options = {
                 host: 'www.ratemyprofessors.com',
-                path: '/search.jsp?query=university+of+minnesota+twin+cities&queryoption=HEADER&stateselect=&country=&dept=&queryBy=&facetSearch=&schoolName=&offset=' + offset + '&max=20',
+                path: '/search.jsp?query='+query+'&queryoption=HEADER&stateselect=&country=&dept=&queryBy=&facetSearch=&schoolName=&offset=' + offset + '&max=20',
                 keepAlive: true
             };
         
@@ -35,9 +37,13 @@ function main() {
                     $ = cheerio.load(body);
                     // Init the max
                     if(max == -1){
-                        var regex = /-[0-9]+/;
-                        var resultString = $(".result-count");
-                        max = Math.abs(parseInt(regex.exec(resultString)));
+                        var regex = /[0-9-]+/g;
+                        var resultString = $(".result-count").last().text();
+                        var filtered = resultString.match(regex);
+                        max = Math.abs(parseInt(filtered[1])) - 20;
+                        if(max <= -20){
+                            return;
+                        }
                     }
                     var professorsOnPage = $("li[class='listing PROFESSOR']");
                     async.each(professorsOnPage,
@@ -75,7 +81,11 @@ function main() {
                         if(offset < max) {
                             startSearch();
                         }else{
-                            console.log("Finished");
+                            if(program.save){
+                                fs.writeFile(program.save,JSON.stringify(table));
+                            }else{
+                                console.log(pretty.render(table));
+                            }
                         }
                     })
                 },
@@ -177,9 +187,21 @@ function main() {
             offset += 20;
         },0);
     }
-
-
-    startSearch();
+    
+    program
+        .option("find [query]","Queries for a teacher/teachers in a organization")
+        .option("-s, --save [filename]","Saves the results to a json file")
+        .parse(process.argv);
+    if(program.find){
+        query = program.find.replace(/ /g,"+");
+        startSearch();
+    }
+    
+    if (!process.argv.slice(2).length) {
+        program.outputHelp();
+    }
+    
+    
 }
 
-main()
+main();
