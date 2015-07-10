@@ -1,3 +1,4 @@
 # UMNRateMyProfessor
 
-Needs to be refactored due  to new UMN changes
+
+search.js can now be used to generate your own database.
