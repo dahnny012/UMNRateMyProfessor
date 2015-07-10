@@ -190,11 +190,15 @@ function main() {
     
     program
         .option("find [query]","Queries for a teacher/teachers in a organization")
-        .option("-s, --save [filename]","saves the results to a json file")
+        .option("-s, --save [filename]","Saves the results to a json file")
         .parse(process.argv);
     if(program.find){
         query = program.find.replace(/ /g,"+");
         startSearch();
+    }
+    
+    if (!process.argv.slice(2).length) {
+        program.outputHelp();
     }
     
     
