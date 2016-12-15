@@ -1,0 +1,224 @@
+<link rel="stylesheet"type="text/css" href="mockup.css">
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300' rel='stylesheet' type='text/css'>
+
+
+<div class="profBox" id="staticBox">
+    <div class="profName">An Empty Name
+    <img src="http://umnratemyprofessor-dahnny012.c9.io:8080/"></img>
+    </div>
+    <div class="profMetricsWrapper">
+        <div class="profMetricsHeader">
+            <div class="profScore">Avg. Score</div>
+            <div class="profAvgGrade">Avg. Grade</div>
+        </div>
+        <div class="profMetric">
+            <div class="profScore metricScore"></div>
+            <div class="profAvgGrade metricGrade"></div>
+        </div>
+        <div class="showReviews">
+            Reviews
+        </div>
+    </div>
+    
+    <section class="reviewsWrapper">
+        <div class="review">
+            <div class="reviewHeader">
+                <div class="reviewHeaderClass"> 
+                    <div class="reviewDate"></div>
+                </div>
+                <div class="reviewScore"></div>
+            </div>
+            <div class="reviewText">
+            </div>
+            <div class="reviewTextBook"></div>
+        </div>
+        </div>
+    </section>
+</div>
+
+
+
+<div class="profBox" id="emptyBox">
+    <div class="profName">
+		<a class="profLink" href="" target="_blank">No information found</a>
+    </div>
+    <div class="profMetricsWrapper">
+        <div class="profMetricsHeader">
+            <div class="profScore">Avg. Score</div>
+            <div class="profAvgGrade">Avg. Grade</div>
+        </div>
+        <div class="profMetric">
+            <div class="profScore metricScore">n/a</div>
+            <div class="profAvgGrade metricGrade">n/a</div>
+        </div>
+        <div class="showReviews">
+            Reviews
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="data.js"></script>
+<script>
+    
+var client = new XMLHttpRequest();
+client.open("GET","http://umnratemyprofessor-dahnny012.c9.io:8080/");
+client.send();
+
+$(".showReviews").on("click",function(e){
+        console.log("gg");
+        var parent = e.target.parentElement.parentElement;
+        if(e.target.clicked == undefined){
+            e.target.clicked = true;
+            parent.setAttribute("style","height:auto"); 
+        }else{
+            e.target.clicked = undefined;
+            parent.setAttribute("style","height:105px"); 
+        }
+})
+
+function runTest(){
+    for(var prof in testProfs){
+        var size = testProfs[prof].length;
+            for(var i=0; i<size; i++){
+            var response = {prof:undefined};
+            var node = createInfoNode(response);
+            $("body").append(node);
+        }
+    }
+}
+runTest()
+
+
+function createInfoNode(response){
+	var prof = response.prof;
+    if(prof == undefined)
+        return blankNode();
+	var profBox = createDiv("profBox");
+	var profName = createDiv("profName");
+	profName.textContent = prof.name;
+	var profLink = createDiv("profLink","a");
+	var link = "http://"+prof["link"].replace(" ","");
+	profLink.setAttribute("href",link);
+	profLink.setAttribute("target","_blank");
+	profLink.appendChild(profName);
+	
+	var profMetricsWrapper = createDiv("profMetricsWrapper");
+	var profMetricsHeader = createDiv("profMetricsHeader");
+	var profScore = createDiv("profScore");
+	profScore.textContent = "Avg. Score";
+	var profAvgGrade = createDiv("profAvgGrade");
+	profAvgGrade.textContent ="Avg. Grade";
+	var profMetric = createDiv("profMetric");
+	var metricScore= createDiv("profScore metricScore");
+	metricScore.textContent = prof.metrics.rating;
+	var metricGrade = createDiv("profAvgGrade metricGrade");
+	metricGrade.textContent = prof.metrics.avgGrade;
+	var showReviews = createDiv("showReviews");
+	showReviews.textContent = "Reviews";
+	showReviews.addEventListener("click",reviewsHandler);
+	var reviewsWrapper = createDiv("reviews","section")
+	
+	profBox.appendChild(profLink);
+	profBox.appendChild(profMetricsWrapper);
+	profBox.appendChild(reviewsWrapper);
+	profMetricsWrapper.appendChild(profMetricsHeader);
+	profMetricsWrapper.appendChild(profMetric);
+	profMetricsWrapper.appendChild(showReviews);
+	profMetricsHeader.appendChild(profScore);
+	profMetricsHeader.appendChild(profAvgGrade);
+	profMetric.appendChild(metricScore);
+	profMetric.appendChild(metricGrade);
+	
+	
+	for(var review in prof.reviews){
+	    review = prof.reviews[review];
+		var reviewNode = createDiv("review");
+	 	var reviewHeader = createDiv("reviewHeader");
+	 	var reviewHeaderClass = createDiv("reviewHeaderClass");
+	 	reviewHeaderClass.textContent = review.class;
+	 	var reviewDate = createDiv("reviewDate");
+	 	reviewDate.textContent = review.date;
+	 	var reviewScore = createDiv("reviewScore");
+	 	reviewScore.innherHtml = review.score;
+	 	var reviewText = createDiv("reviewText");
+	 	reviewText.textContent = review.review;
+	 	var reviewTextBook = createDiv("reviewTextBook");
+	 	reviewTextBook.textContent = review.textbook;
+	 	reviewsWrapper.appendChild(reviewNode);
+	 	reviewNode.appendChild(reviewHeader);
+	 	reviewNode.appendChild(reviewText);
+	 	reviewNode.appendChild(reviewTextBook);
+	 	reviewHeader.appendChild(reviewHeaderClass);
+	 	reviewHeaderClass.appendChild(reviewDate);
+	 	reviewHeader.appendChild(reviewScore);
+	}
+	return profBox;
+}
+
+function blankNode() {
+    var profBox = createDiv("profBox");
+    var profName = createDiv("profName");
+    profName.textContent = "No information found";
+    var profLink = createDiv("profLink","a");
+    var link = "http://ratemyprofessor.com";
+    profLink.setAttribute("href",link);
+    profLink.setAttribute("target","_blank");
+    profLink.appendChild(profName);
+    var profMetricsWrapper = createDiv("profMetricsWrapper");
+    var profMetricsHeader = createDiv("profMetricsHeader");
+    var profScore = createDiv("profScore");
+    profScore.textContent = "Avg. Score";
+    var profAvgGrade = createDiv("profAvgGrade");
+    profAvgGrade.textContent = "Avg. Grade";
+    var profMetric = createDiv("profMetric");
+    var metricScore= createDiv("profScore metricScore");
+    metricScore.textContent = "N/A";
+    var metricGrade = createDiv("profAvgGrade metricGrade");
+    metricGrade.textContent = "N/A";
+    var showReviews = createDiv("showReviews");
+    showReviews.textContent = "Reviews";
+
+    profBox.appendChild(profLink);
+    profBox.appendChild(profMetricsWrapper);
+    profMetricsWrapper.appendChild(profMetricsHeader);
+    profMetricsWrapper.appendChild(profMetric);
+    profMetricsWrapper.appendChild(showReviews);
+    profMetricsHeader.appendChild(profScore);
+    profMetricsHeader.appendChild(profAvgGrade);
+    profMetric.appendChild(metricScore);
+    profMetric.appendChild(metricGrade);
+
+    return profBox;
+}
+
+
+
+    
+function createDiv(_class,tag){
+	if(tag === undefined)
+		tag = "div";
+	var node = document.createElement(tag);
+	node.className = _class;
+	return node;
+}
+
+function addText(div,text){
+    var textNode = document.createTextNode(text);
+    div.appendChild(textNode);
+}
+    
+function reviewsHandler(){
+	var parent = event.target.parentElement.parentElement;
+    if(event.target.clicked == undefined){
+    	event.target.clicked = true;
+        parent.setAttribute("style","height:auto"); 
+    }else{
+        event.target.clicked = undefined;
+        parent.setAttribute("style","height:105px"); 
+    }
+}
+
+</script>
